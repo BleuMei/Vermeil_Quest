@@ -247,3 +247,22 @@ function showPopup(message) {
 function saveUser() {
   localStorage.setItem("user", JSON.stringify(user));
 }
+
+/* =========================
+   BURGER MENU LOGIC
+   ========================= */
+
+function toggleMenu() {
+  const menu = document.getElementById("sideMenu");
+  menu.classList.toggle("open");
+}
+
+function closeMenu() {
+  const menu = document.getElementById("sideMenu");
+  if (menu) menu.classList.remove("open");
+}
+
+function logout() {
+  localStorage.removeItem("user");
+  window.location.href = "index.html";
+}
