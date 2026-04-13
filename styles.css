@@ -1,0 +1,93 @@
+body {
+  margin: 0;
+  font-family: "Poppins", sans-serif;
+  background: linear-gradient(135deg, #0b1020, #0f1b3d, #0a2540);
+  color: #e5e7eb;
+  text-align: center;
+}
+
+/* LOGIN CARD */
+.center-card {
+  margin-top: 120px;
+  background: rgba(17, 25, 40, 0.7);
+  padding: 30px;
+  width: 300px;
+  margin-left: auto;
+  margin-right: auto;
+  border-radius: 16px;
+  border: 1px solid rgba(147, 197, 253, 0.3);
+}
+
+/* INPUT */
+input {
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+  width: 80%;
+  background: rgba(0,0,0,0.3);
+  color: white;
+}
+
+/* BUTTON */
+button {
+  background: linear-gradient(135deg, #3b82f6, #60a5fa);
+  border: none;
+  padding: 10px 16px;
+  border-radius: 12px;
+  color: white;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+button:hover {
+  transform: scale(1.05);
+}
+
+/* PROFILE CARD */
+.profile-card {
+  background: rgba(17, 25, 40, 0.8);
+  padding: 20px;
+  width: 300px;
+  margin: 20px auto;
+  border-radius: 16px;
+  border: 1px solid rgba(96,165,250,0.3);
+}
+
+/* CLASS CARDS */
+.class-grid {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.class-card {
+  background: rgba(17, 25, 40, 0.7);
+  padding: 20px;
+  width: 150px;
+  border-radius: 14px;
+  border: 1px solid rgba(147, 197, 253, 0.3);
+  transition: 0.3s;
+}
+
+.class-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 0 20px rgba(59,130,246,0.5);
+}
+
+/* XP POPUP */
+.xp-popup {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: #3b82f6;
+  padding: 10px 15px;
+  border-radius: 10px;
+  animation: fade 1.2s ease forwards;
+}
+
+@keyframes fade {
+  0% {opacity: 0; transform: translateY(-10px);}
+  30% {opacity: 1;}
+  100% {opacity: 0; transform: translateY(-20px);}
+}
