@@ -316,3 +316,15 @@ function showLevelUpScreen(level) {
 
   setTimeout(() => screen.classList.add("hidden"), 2000);
 }
+
+async function addStudent(db, studentId, name, section) {
+  await setDoc(doc(db, "users", studentId), {
+    id: studentId,
+    name: name,
+    section: section,
+    xp: 0,
+    level: 1,
+    streak: 0,
+    dailyClaimed: {}
+  });
+}
