@@ -359,3 +359,18 @@ async function login() {
 
   window.location.href = "dashboard.html";
 }
+
+import { db } from "./firebase.js";
+import { doc, updateDoc } from "firebase/firestore";
+
+async function saveUser() {
+  localStorage.setItem("user", JSON.stringify(user));
+
+  const ref = doc(db, "students", user.id);
+
+  await updateDoc(ref, {
+    xp: user.xp,
+    level: user.level,
+    streak: user.streak
+  });
+}
