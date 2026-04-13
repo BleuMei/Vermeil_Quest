@@ -2,9 +2,31 @@
    FIREBASE IMPORT
 ========================= */
 
-import { db } from "./firebase.js";
-import { doc, getDoc, setDoc, updateDoc } 
-from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import {
+  getFirestore,
+  doc,
+  getDoc,
+  setDoc,
+  updateDoc
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+/* =========================
+   FIREBASE CONFIG
+========================= */
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBMc36-Vg_Ger814ZWz_JHs7KG-csgGggA",
+  authDomain: "vermeil-quest.firebaseapp.com",
+  projectId: "vermeil-quest",
+  storageBucket: "vermeil-quest.firebasestorage.app",
+  messagingSenderId: "943194791633",
+  appId: "1:943194791633:web:a3ddd0f3914f518171aff0",
+  measurementId: "G-02CJBN8HS9"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
 /* =========================
    USER STATE
@@ -57,13 +79,13 @@ async function loadUserFromFirebase() {
     loadUserUI();
 
   } catch (err) {
-    console.log("Firebase failed, using local", err);
+    console.log("Firebase failed, using local data", err);
     loadUserUI();
   }
 }
 
 /* =========================
-   UI LOAD
+   UI
 ========================= */
 
 function loadUserUI() {
@@ -85,7 +107,8 @@ async function saveUser() {
       xp: user.xp,
       level: user.level,
       streak: user.streak,
-      dailyClaimed: user.dailyClaimed
+      dailyClaimed: user.dailyClaimed,
+      lastLogin: user.lastLogin
     });
   } catch (err) {
     console.log("Save failed:", err);
@@ -97,13 +120,13 @@ function saveLocal() {
 }
 
 /* =========================
-   CLASS NAVIGATION
+   CLASS NAVIGATION (FIXED)
 ========================= */
 
-function openLesson(url) {
+window.openLesson = function (url) {
   if (!url) return;
   window.location.href = url;
-}
+};
 
 /* =========================
    XP SYSTEM
@@ -118,7 +141,7 @@ function addXP(amount = 10) {
 }
 
 /* =========================
-   LEVEL SYSTEM
+   LEVEL SYSTEM (MANA BAR)
 ========================= */
 
 function updateLevelUI() {
@@ -138,8 +161,8 @@ function updateLevelUI() {
   if (bar) {
     bar.style.width = `${progress}%`;
     bar.style.transition = "width 0.6s ease";
-
     bar.style.boxShadow = "0 0 20px rgba(96,165,250,0.7)";
+
     setTimeout(() => {
       bar.style.boxShadow = "0 0 6px rgba(96,165,250,0.2)";
     }, 600);
@@ -147,7 +170,9 @@ function updateLevelUI() {
 
   saveUser();
 
-  if (leveledUp) showLevelUpScreen(level);
+  if (leveledUp) {
+    showLevelUpScreen(level);
+  }
 }
 
 /* =========================
@@ -277,11 +302,3 @@ function showLevelUpScreen(level) {
 
   setTimeout(() => screen.classList.add("hidden"), 2000);
 }
-
-bar.classList.add("level-up-glow");
-setTimeout(() => bar.classList.remove("level-up-glow"), 600);
-
-window.openLesson = function(url) {
-  if (!url) return;
-  window.location.href = url;
-};
