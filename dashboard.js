@@ -280,3 +280,8 @@ function showLevelUpScreen(level) {
 
 bar.classList.add("level-up-glow");
 setTimeout(() => bar.classList.remove("level-up-glow"), 600);
+
+window.openLesson = function(url) {
+  if (!url) return;
+  window.location.href = url;
+};
