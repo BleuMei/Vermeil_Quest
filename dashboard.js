@@ -50,5 +50,9 @@ function enterClass(className) {
   window.location.href = "class.html";
 }
 
+function openLesson(url) {
+  window.open(url, "_blank"); // opens in new tab
+}
+
 updateStreak();
 loadUser();
