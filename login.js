@@ -1,48 +1,59 @@
-function login() {
-  const id = document.getElementById("studentId").value.trim();
-  const pass = document.getElementById("password").value.trim();
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-  if (!id || !pass) {
-    alert("Please enter your Student ID and password");
+const firebaseConfig = {
+  apiKey: "AIzaSyBMc36-Vg_Ger814ZWz_JHs7KG-csgGggA",
+  authDomain: "vermeil-quest.firebaseapp.com",
+  projectId: "vermeil-quest",
+  storageBucket: "vermeil-quest.firebasestorage.app",
+  messagingSenderId: "943194791633",
+  appId: "1:943194791633:web:a3ddd0f3914f518171aff0"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+window.login = async function () {
+  const id = document.getElementById("studentId").value;
+  const password = document.getElementById("password").value;
+
+  if (!id || !password) {
+    alert("Enter ID and password");
     return;
   }
 
-  // fake database
-  const users = [
-    { id: "2301040030", password: "2301040030", name: "Kraeza Mae Tabinga" }
-  ];
+  try {
+    const ref = doc(db, "students", id);
+    const snap = await getDoc(ref);
 
-  const foundUser = users.find(u => u.id === id && u.password === pass);
+    if (!snap.exists()) {
+      alert("Student not found in database");
+      return;
+    }
 
-  if (!foundUser) {
-    alert("Invalid credentials");
-    return;
+    const data = snap.data();
+
+    // SIMPLE PASSWORD SYSTEM (ID = password)
+    if (password !== id) {
+      alert("Wrong password");
+      return;
+    }
+
+    // SAVE TO LOCAL (dashboard depends on this)
+    localStorage.setItem("user", JSON.stringify({
+      id: id,
+      name: data.name,
+      section: data.section,
+      xp: data.xp || 0,
+      level: data.level || 1,
+      streak: data.streak || 0,
+      dailyClaimed: data.dailyClaimed || {}
+    }));
+
+    window.location.href = "dashboard.html";
+
+  } catch (err) {
+    console.log(err);
+    alert("Login failed. Check console.");
   }
-
-  // CHECK IF USER ALREADY EXISTS (IMPORTANT FIX)
-  let existingUser = JSON.parse(localStorage.getItem("user"));
-
-  let user = existingUser && existingUser.id === foundUser.id
-    ? existingUser
-    : {
-        id: foundUser.id,
-        name: foundUser.name,
-        xp: 0,
-        level: 1,
-        streak: 0,
-        lastLogin: null,
-        dailyClaimed: {}
-      };
-
-  // UPDATE LOGIN STREAK LOGIC
-  const today = new Date().toDateString();
-
-  if (user.lastLogin !== today) {
-    user.streak += 1;
-    user.lastLogin = today;
-  }
-
-  localStorage.setItem("user", JSON.stringify(user));
-
-  window.location.href = "dashboard.html";
-}
+};
