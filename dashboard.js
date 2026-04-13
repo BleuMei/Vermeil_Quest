@@ -266,3 +266,50 @@ function logout() {
   localStorage.removeItem("user");
   window.location.href = "index.html";
 }
+
+/* =========================
+   CHEST REWARD SYSTEM
+   ========================= */
+
+function showChest() {
+  const chest = document.getElementById("rewardChest");
+
+  if (!chest) return;
+
+  chest.classList.remove("hidden");
+  chest.classList.add("shake");
+
+  setTimeout(() => {
+    chest.classList.remove("shake");
+  }, 1200);
+}
+
+function openChest() {
+  const chest = document.getElementById("rewardChest");
+
+  chest.innerText = "✨";
+  chest.classList.remove("shake");
+
+  // reward logic
+  let reward = 20;
+
+  user.xp += reward;
+  saveUser();
+  updateLevelUI();
+
+  showFloatingReward(`+${reward} XP`);
+
+  setTimeout(() => {
+    chest.classList.add("hidden");
+  }, 800);
+}
+
+function showFloatingReward(text) {
+  const popup = document.createElement("div");
+  popup.className = "xp-popup";
+  popup.innerText = text;
+
+  document.body.appendChild(popup);
+
+  setTimeout(() => popup.remove(), 1200);
+}
