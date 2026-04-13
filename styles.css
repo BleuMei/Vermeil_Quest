@@ -212,3 +212,8 @@ p {
     width: 90%;
   }
 }
+
+.special {
+  border-color: rgba(96,165,250,0.6);
+  box-shadow: 0 0 20px rgba(59,130,246,0.4);
+}
