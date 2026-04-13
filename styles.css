@@ -225,3 +225,34 @@ button:hover {
     width: 90%;
   }
 }
+
+.day-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.day-box {
+  padding: 12px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(147,197,253,0.2);
+  cursor: pointer;
+  transition: 0.2s;
+  font-size: 14px;
+}
+
+.day-box:hover {
+  transform: scale(1.05);
+}
+
+.day-box.active {
+  border: 1px solid #60a5fa;
+  box-shadow: 0 0 15px rgba(59,130,246,0.4);
+}
+
+.day-box.locked {
+  opacity: 0.3;
+  pointer-events: none;
+}
