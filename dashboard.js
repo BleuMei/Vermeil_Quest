@@ -5,11 +5,23 @@ if (!user) {
 }
 
 /* =========================
-   INIT DEFAULT STRUCTURE
+   SAFE INIT
    ========================= */
 
 user.dailyClaimed = user.dailyClaimed || {};
 user.lastLogin = user.lastLogin || null;
+
+/* =========================
+   START
+   ========================= */
+
+window.onload = () => {
+  updateStreak();
+  saveUser();
+  loadUser();
+  updateDaysUI();
+  showDailyPopup(); // IMPORTANT: first thing user sees
+};
 
 /* =========================
    LOAD UI
@@ -20,7 +32,6 @@ function loadUser() {
   document.getElementById("id").innerText = user.id;
 
   updateLevelUI();
-  updateDaysUI();
 }
 
 /* =========================
@@ -36,7 +47,7 @@ function addXP(amount = 10) {
 }
 
 /* =========================
-   LEVEL SYSTEM (0–100)
+   LEVEL SYSTEM
    ========================= */
 
 function updateLevelUI() {
@@ -55,19 +66,59 @@ function updateLevelUI() {
 }
 
 /* =========================
-   DAILY QUEST SYSTEM (1–7 ONLY)
+   DAILY POPUP (MAIN FEATURE)
+   ========================= */
+
+function getTodayDay() {
+  let base = user.streak % 7;
+  return base === 0 ? 7 : base;
+}
+
+function showDailyPopup() {
+  const day = getTodayDay();
+
+  const popup = document.createElement("div");
+  popup.className = "center-popup";
+
+  popup.innerHTML = `
+    <h2>🔥 Day ${day} Quest</h2>
+    <p>Claim your daily reward to continue your streak.</p>
+    <button id="claimBtn">Claim Day ${day}</button>
+  `;
+
+  document.body.appendChild(popup);
+
+  let claimed = false;
+
+  document.getElementById("claimBtn").onclick = () => {
+    if (claimed) return;
+    claimed = true;
+
+    claimDay(day);
+
+    popup.innerHTML = `<h2>✔ Completed</h2><p>XP absorbed. You’re getting stronger.</p>`;
+
+    setTimeout(() => popup.remove(), 2000);
+  };
+
+  setTimeout(() => {
+    if (!claimed) popup.remove();
+  }, 5000);
+}
+
+/* =========================
+   DAILY QUEST SYSTEM (ONLY 1 ACTIVE DAY)
    ========================= */
 
 function claimDay(day) {
   let today = new Date().toDateString();
 
-  if (user.dailyClaimed[day] === today) {
-    showPopup("You already claimed today’s reward.");
+  if (user.dailyClaimed[today]) {
+    showPopup("You already completed today’s quest.");
     return;
   }
 
-  user.dailyClaimed = {}; // only ONE active day at a time
-  user.dailyClaimed[day] = today;
+  user.dailyClaimed[today] = day;
 
   user.xp += 20;
 
@@ -80,46 +131,50 @@ function claimDay(day) {
   showPopup(`Day ${day} completed. +20 XP earned.`);
 }
 
+/* =========================
+   BUTTON STATES
+   ========================= */
+
 function updateDaysUI() {
+  let today = new Date().toDateString();
+
   for (let i = 1; i <= 7; i++) {
     let btn = document.getElementById("day" + i);
     if (!btn) continue;
 
-    if (user.dailyClaimed[i]) {
+    if (user.dailyClaimed[today] === i) {
       btn.innerText = "Completed";
       btn.disabled = true;
       btn.style.opacity = 0.5;
+    } else {
+      btn.disabled = i !== getTodayDay();
+      btn.style.opacity = i !== getTodayDay() ? 0.3 : 1;
     }
   }
 }
 
 /* =========================
-   STREAK SYSTEM (FIXED)
+   STREAK SYSTEM
    ========================= */
 
 function updateStreak() {
   let today = new Date().toDateString();
 
   if (user.lastLogin !== today) {
-    user.streak = (user.lastLogin) ? user.streak + 1 : 1;
+    if (user.lastLogin) {
+      let last = new Date(user.lastLogin);
+      let now = new Date(today);
+
+      let diff = (now - last) / (1000 * 60 * 60 * 24);
+
+      if (diff === 1) user.streak += 1;
+      else user.streak = 1;
+    } else {
+      user.streak = 1;
+    }
+
     user.lastLogin = today;
   }
-
-  saveUser();
-}
-
-/* =========================
-   CLASS NAVIGATION
-   ========================= */
-
-function enterClass(className) {
-  localStorage.setItem("currentClass", className);
-  window.location.href = "class.html";
-}
-
-function openLesson(url) {
-  localStorage.setItem("lessonLink", url);
-  window.location.href = "lesson.html";
 }
 
 /* =========================
@@ -163,7 +218,7 @@ function showPopup(message) {
 }
 
 /* =========================
-   SAVE HELPERS
+   SAVE
    ========================= */
 
 function saveUser() {
@@ -171,8 +226,15 @@ function saveUser() {
 }
 
 /* =========================
-   INIT
+   NAV (optional safe)
    ========================= */
 
-updateStreak();
-loadUser();
+function enterClass(className) {
+  localStorage.setItem("currentClass", className);
+  window.location.href = "class.html";
+}
+
+function openLesson(url) {
+  localStorage.setItem("lessonLink", url);
+  window.location.href = "lesson.html";
+}
