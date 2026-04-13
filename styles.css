@@ -393,10 +393,6 @@ button:hover {
   100% { transform: translate(-50%, -50%) rotate(0deg); }
 }
 
-.center-popup {
-  text-align: center;
-}
-
 /* optional glow variants */
 .rare {
   border: 1px solid #60a5fa;
@@ -452,4 +448,57 @@ button:hover {
   0% { transform: scale(0.6); opacity: 0; }
   60% { transform: scale(1.2); opacity: 1; }
   100% { transform: scale(1); }
+}
+
+/* =========================
+   XP MANA SYSTEM (YOU FORGOT THIS)
+   ========================= */
+
+.xp-container {
+  width: 100%;
+  height: 14px;
+  background: rgba(0,0,0,0.4);
+  border-radius: 10px;
+  overflow: hidden;
+  margin-top: 10px;
+  border: 1px solid rgba(147,197,253,0.2);
+}
+
+/* THE ACTUAL MANA BAR */
+.xp-bar {
+  height: 100%;
+  width: 0%;
+
+  background: linear-gradient(
+    270deg,
+    #3b82f6,
+    #60a5fa,
+    #93c5fd,
+    #60a5fa,
+    #3b82f6
+  );
+
+  background-size: 400% 400%;
+  animation: manaFlow 6s linear infinite;
+
+  transition: width 0.6s ease;
+
+  box-shadow: 0 0 12px rgba(96,165,250,0.5);
+}
+
+/* FLOWING MAGIC EFFECT */
+@keyframes manaFlow {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 100% 50%; }
+}
+
+/* EXTRA GLOW ON LEVEL UP (pairs with JS) */
+.xp-bar.level-up-glow {
+  animation: manaBurst 0.6s ease;
+}
+
+@keyframes manaBurst {
+  0% { box-shadow: 0 0 10px rgba(96,165,250,0.4); }
+  50% { box-shadow: 0 0 30px rgba(96,165,250,0.9); }
+  100% { box-shadow: 0 0 10px rgba(96,165,250,0.4); }
 }
