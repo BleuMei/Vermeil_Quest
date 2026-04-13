@@ -354,3 +354,41 @@ button:hover {
   margin-bottom: 10px;
   font-family: "Cinzel", serif;
 }
+
+/* =========================
+   REWARD CHEST SYSTEM
+   ========================= */
+
+.chest {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 60px;
+  cursor: pointer;
+  z-index: 99999;
+  animation: chestAppear 0.4s ease;
+  filter: drop-shadow(0 0 15px rgba(96,165,250,0.6));
+}
+
+.hidden {
+  display: none;
+}
+
+@keyframes chestAppear {
+  from { transform: translate(-50%, -50%) scale(0.2); opacity: 0; }
+  to { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+}
+
+/* chest shake before opening */
+.shake {
+  animation: shake 0.4s infinite;
+}
+
+@keyframes shake {
+  0% { transform: translate(-50%, -50%) rotate(0deg); }
+  25% { transform: translate(-52%, -50%) rotate(-5deg); }
+  50% { transform: translate(-48%, -50%) rotate(5deg); }
+  75% { transform: translate(-52%, -50%) rotate(-3deg); }
+  100% { transform: translate(-50%, -50%) rotate(0deg); }
+}
