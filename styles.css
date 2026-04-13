@@ -170,3 +170,10 @@ h1 {
 p {
   color: #cbd5e1;
 }
+
+
+#choices button {
+  display: block;
+  margin: 10px auto;
+  width: 80%;
+}
