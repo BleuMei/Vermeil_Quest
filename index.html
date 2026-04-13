@@ -7,21 +7,20 @@
 
   <link rel="stylesheet" href="styles.css">
 
-  <!-- Google Font -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <!-- Fantasy Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Rajdhani:wght@400;500;600&display=swap" rel="stylesheet">
 </head>
 
 <body>
 
   <div class="center-card">
     <h1>Vermeil Quest</h1>
-    <p class="subtitle">Gamified Learning System</p>
+    <p class="subtitle">Enter the Academy</p>
 
-    <!-- FORM (this fixes Enter key automatically) -->
+    <!-- FORM (clean + functional) -->
     <form onsubmit="login(); return false;">
       
+      <!-- STUDENT ID -->
       <input 
         id="studentId" 
         type="text" 
@@ -31,24 +30,24 @@
 
       <br><br>
 
+      <!-- PASSWORD (same as ID for now) -->
       <input 
         id="password" 
         type="password" 
-        placeholder="Password" 
+        placeholder="Password (same as ID)" 
         required
       >
 
-      <input id="studentId" placeholder="Enter Student ID">
-<button onclick="login()">Enter Academy</button>
-
       <br><br>
 
+      <!-- SUBMIT -->
       <button type="submit">Enter Quest</button>
 
     </form>
   </div>
 
-  <script src="login.js"></script>
+  <!-- IMPORTANT: must be module for Firebase -->
+  <script type="module" src="login.js"></script>
 
 </body>
 </html>
