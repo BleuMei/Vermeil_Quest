@@ -4,7 +4,13 @@ if (!user) {
   window.location.href = "index.html";
 }
 
-/* SAFE DEFAULTS */
+/* =========================
+   SAFE DEFAULTS (IMPORTANT FIX)
+   ========================= */
+
+user.xp = user.xp || 0;
+user.level = user.level || 1;
+user.streak = user.streak || 0;
 user.dailyClaimed = user.dailyClaimed || {};
 user.lastLogin = user.lastLogin || null;
 
@@ -34,7 +40,8 @@ function loadUser() {
    ========================= */
 
 function addXP(amount = 10) {
-  user.xp += amount;
+  user.xp = (user.xp || 0) + amount;
+
   saveUser();
   showXP(amount);
   updateLevelUI();
@@ -50,29 +57,31 @@ function updateLevelUI() {
 
   user.level = level;
 
-  document.getElementById("level").innerText = level;
-  document.getElementById("xp").innerText = `${progress} / 100`;
+  const levelEl = document.getElementById("level");
+  const xpEl = document.getElementById("xp");
+  const bar = document.getElementById("xpBar");
 
-  let bar = document.getElementById("xpBar");
+  if (levelEl) levelEl.innerText = level;
+  if (xpEl) xpEl.innerText = `${progress} / 100`;
   if (bar) bar.style.width = `${progress}%`;
 
   saveUser();
 }
 
 /* =========================
-   DAILY SYSTEM (MAIN FIX)
+   DAILY SYSTEM
    ========================= */
 
 function getTodayIndex() {
   return (new Date().getDate() % 7) + 1;
 }
 
-/* highlight active day in MAIN UI */
+/* highlight UI */
 function highlightToday() {
-  let today = getTodayIndex();
+  const today = getTodayIndex();
 
   for (let i = 1; i <= 7; i++) {
-    let el = document.getElementById("day" + i);
+    const el = document.getElementById("day" + i);
     if (!el) continue;
 
     el.classList.remove("active", "locked");
@@ -86,45 +95,54 @@ function highlightToday() {
 }
 
 /* =========================
-   LOGIN POPUP (FIXED)
+   DAILY POPUP (LOGIN EVENT)
    ========================= */
 
+let popupOpen = false;
+
 function showDailyPopup() {
+  if (popupOpen) return;
+  popupOpen = true;
+
   const popup = document.createElement("div");
   popup.className = "center-popup";
 
-  const days = Array.from({ length: 7 }, (_, i) => i + 1);
   const today = getTodayIndex();
 
   popup.innerHTML = `
-    <h3>Daily Quest Unlocked</h3>
-    <p>Only today’s quest is available</p>
+    <h3>Daily Quest Available</h3>
+    <p>Only today’s quest can be claimed</p>
 
     <div class="day-grid">
-      ${days.map(day => `
-        <div class="day-box ${day === today ? "active" : "locked"}"
-             onclick="claimDay(${day})">
-          Day ${day}
-        </div>
-      `).join("")}
+      ${Array.from({ length: 7 }, (_, i) => i + 1)
+        .map(day => `
+          <div class="day-box ${day === today ? "active" : "locked"}"
+               onclick="claimDay(${day})">
+            Day ${day}
+          </div>
+        `).join("")}
     </div>
   `;
 
   document.body.appendChild(popup);
 
-  let timeout = setTimeout(() => {
+  const timeout = setTimeout(() => {
     popup.remove();
+    popupOpen = false;
   }, 5000);
 
   popup.addEventListener("click", (e) => {
     e.stopPropagation();
   });
 
-  document.addEventListener("click", function handler() {
+  const handler = () => {
     popup.remove();
+    popupOpen = false;
     clearTimeout(timeout);
     document.removeEventListener("click", handler);
-  });
+  };
+
+  document.addEventListener("click", handler);
 }
 
 /* =========================
@@ -132,15 +150,15 @@ function showDailyPopup() {
    ========================= */
 
 function claimDay(day) {
-  let today = getTodayIndex();
+  const today = getTodayIndex();
 
   if (day !== today) {
-    showPopup("Not available yet. Come back on your assigned day.");
+    showPopup("That quest is not available yet.");
     return;
   }
 
   if (user.dailyClaimed[day]) {
-    showPopup("Already claimed today.");
+    showPopup("Already completed today.");
     return;
   }
 
@@ -151,9 +169,9 @@ function claimDay(day) {
 
   saveUser();
   updateLevelUI();
+  highlightToday();
 
   showPopup(`Quest Complete: Day ${day} +20 XP`);
-  highlightToday();
 }
 
 /* =========================
@@ -161,7 +179,7 @@ function claimDay(day) {
    ========================= */
 
 function updateStreak() {
-  let today = new Date().toDateString();
+  const today = new Date().toDateString();
 
   if (user.lastLogin !== today) {
     user.streak = user.lastLogin ? user.streak + 1 : 1;
@@ -172,7 +190,7 @@ function updateStreak() {
 }
 
 /* =========================
-   XP POPUP (small + fast)
+   XP POPUP
    ========================= */
 
 function showXP(amount) {
@@ -185,10 +203,15 @@ function showXP(amount) {
 }
 
 /* =========================
-   CENTER POPUP (5s stable)
+   CENTER POPUP (SAFE)
    ========================= */
 
+let messageLock = false;
+
 function showPopup(message) {
+  if (messageLock) return;
+  messageLock = true;
+
   const popup = document.createElement("div");
   popup.className = "center-popup";
   popup.innerText = message;
@@ -197,6 +220,7 @@ function showPopup(message) {
 
   setTimeout(() => {
     popup.remove();
+    messageLock = false;
   }, 5000);
 }
 
