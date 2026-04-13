@@ -93,7 +93,7 @@ p {
 }
 
 /* =========================
-   INPUTS (ARCANE UI TEXT)
+   INPUTS
    ========================= */
 
 input {
@@ -139,7 +139,7 @@ button:hover {
 }
 
 /* =========================
-   PROFILE (compact, not stretched)
+   PROFILE (compact)
    ========================= */
 
 .profile-card {
@@ -161,7 +161,7 @@ button:hover {
   padding: 15px;
 }
 
-/* CLASS CARD (CLICK SAFE) */
+/* CLASS CARD */
 .class-card {
   display: inline-block;
   width: auto;
@@ -204,7 +204,7 @@ button:hover {
 }
 
 /* =========================
-   CENTER POPUP
+   CENTER POPUP (FIXED CENTER)
    ========================= */
 
 .center-popup {
@@ -212,18 +212,29 @@ button:hover {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+
+  width: 90%;
+  max-width: 420px;
+
   background: rgba(17, 25, 40, 0.95);
   border: 1px solid rgba(96,165,250,0.5);
-  padding: 25px;
+  padding: 20px;
   border-radius: 16px;
-  font-size: 18px;
+
+  font-size: 16px;
   color: white;
-  z-index: 99999;
+
+  z-index: 999999;
+
   text-align: center;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 /* =========================
-   DAILY GRID (CLEAN BUT COMPACT)
+   DAILY GRID (FIXED + CLEAN)
    ========================= */
 
 .day-grid {
@@ -234,86 +245,39 @@ button:hover {
   padding: 0 10px;
 }
 
-.day-box {
-  padding: 14px;
-  border-radius: 14px;
-  background: rgba(255,255,255,0.08);
-  border: 1px solid rgba(147,197,253,0.2);
-  cursor: pointer;
-  font-family: "Cinzel", serif;
-  transition: 0.2s;
-  font-size: 14px;
-}
-
-.day-box:hover {
-  transform: scale(1.05);
-  border-color: #60a5fa;
-}
-
-.day-box.active {
-  border: 1px solid #60a5fa;
-  box-shadow: 0 0 15px rgba(59,130,246,0.4);
-}
-
-.day-box.locked {
-  opacity: 0.3;
-  pointer-events: none;
-}
-
-/* =========================
-   MOBILE
-   ========================= */
-
-@media (max-width: 600px) {
-  h1 { font-size: 24px; }
-  h2 { font-size: 18px; }
-
-  .day-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  button { width: 100%; }
-}
-
-/* =========================
-   ARCANE DAILY RUNE SYSTEM
-   ========================= */
-
-.day-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 12px;
-  margin-top: 15px;
-  padding: 0 10px;
-}
-
+/* DAY BOX */
 .day-box {
   font-family: "Cinzel", serif;
+
   padding: 14px;
   border-radius: 14px;
+
   background: rgba(255,255,255,0.06);
   border: 1px solid rgba(147,197,253,0.2);
+
   cursor: pointer;
+
+  font-size: 14px;
+
+  min-height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
   transition: all 0.25s ease;
-  position: relative;
-  overflow: hidden;
+  white-space: nowrap;
 }
 
-/* hover = magical lift */
 .day-box:hover {
   transform: translateY(-4px) scale(1.05);
   border-color: #60a5fa;
-  box-shadow: 0 0 20px rgba(96,165,250,0.25);
 }
 
-/* ACTIVE DAY = glowing rune */
 .day-box.active {
   border: 1px solid #60a5fa;
   box-shadow: 0 0 18px rgba(96,165,250,0.5);
-  animation: pulseRune 2s infinite;
 }
 
-/* LOCKED DAY = sealed magic */
 .day-box.locked {
   opacity: 0.35;
   filter: grayscale(60%);
@@ -325,16 +289,23 @@ button:hover {
   animation: flash 0.4s ease;
 }
 
-/* glow pulse */
-@keyframes pulseRune {
-  0% { box-shadow: 0 0 10px rgba(96,165,250,0.3); }
-  50% { box-shadow: 0 0 25px rgba(96,165,250,0.6); }
-  100% { box-shadow: 0 0 10px rgba(96,165,250,0.3); }
-}
-
-/* click flash */
 @keyframes flash {
   0% { transform: scale(1); }
   50% { transform: scale(1.15); background: rgba(96,165,250,0.25); }
   100% { transform: scale(1); }
+}
+
+/* =========================
+   MOBILE FIX
+   ========================= */
+
+@media (max-width: 600px) {
+  h1 { font-size: 24px; }
+  h2 { font-size: 18px; }
+
+  .day-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  button { width: 100%; }
 }
