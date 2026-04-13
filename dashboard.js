@@ -4,27 +4,22 @@ if (!user) {
   window.location.href = "index.html";
 }
 
-/* =========================
-   SAFE INIT
-   ========================= */
-
+/* SAFE DEFAULTS */
 user.dailyClaimed = user.dailyClaimed || {};
 user.lastLogin = user.lastLogin || null;
 
 /* =========================
-   START
+   INIT
    ========================= */
 
 window.onload = () => {
-  updateStreak();
-  saveUser();
   loadUser();
-  updateDaysUI();
-  showDailyPopup(); // IMPORTANT: first thing user sees
+  updateStreak();
+  showDailyPopup(); // THIS is your login popup
 };
 
 /* =========================
-   LOAD UI
+   UI LOAD
    ========================= */
 
 function loadUser() {
@@ -40,7 +35,6 @@ function loadUser() {
 
 function addXP(amount = 10) {
   user.xp += amount;
-
   saveUser();
   showXP(amount);
   updateLevelUI();
@@ -66,91 +60,74 @@ function updateLevelUI() {
 }
 
 /* =========================
-   DAILY POPUP (MAIN FEATURE)
+   DAILY POPUP (7 DAYS BOX)
    ========================= */
 
-function getTodayDay() {
-  let base = user.streak % 7;
-  return base === 0 ? 7 : base;
-}
-
 function showDailyPopup() {
-  const day = getTodayDay();
+  const popup = document.getElementById("dailyPopup");
 
-  const popup = document.createElement("div");
-  popup.className = "center-popup";
+  const days = Array.from({ length: 7 }, (_, i) => i + 1);
+
+  let todayIndex = getTodayIndex(); // only ONE active day
 
   popup.innerHTML = `
-    <h2>🔥 Day ${day} Quest</h2>
-    <p>Claim your daily reward to continue your streak.</p>
-    <button id="claimBtn">Claim Day ${day}</button>
+    <h3>Daily Quest</h3>
+    <p>Claim your reward for today</p>
+    <div class="day-grid">
+      ${days.map(day => `
+        <div class="day-box ${day === todayIndex ? "active" : "locked"}"
+             onclick="claimDay(${day})">
+          Day ${day}
+        </div>
+      `).join("")}
+    </div>
   `;
 
-  document.body.appendChild(popup);
+  popup.classList.remove("hidden");
 
-  let claimed = false;
-
-  document.getElementById("claimBtn").onclick = () => {
-    if (claimed) return;
-    claimed = true;
-
-    claimDay(day);
-
-    popup.innerHTML = `<h2>✔ Completed</h2><p>XP absorbed. You’re getting stronger.</p>`;
-
-    setTimeout(() => popup.remove(), 2000);
-  };
-
-  setTimeout(() => {
-    if (!claimed) popup.remove();
+  let timeout = setTimeout(() => {
+    popup.remove();
   }, 5000);
+
+  document.addEventListener("click", function handler() {
+    popup.remove();
+    clearTimeout(timeout);
+    document.removeEventListener("click", handler);
+  });
+}
+
+/* ONLY ONE DAY PER DAY */
+function getTodayIndex() {
+  let today = new Date().getDate();
+  return (today % 7) + 1;
 }
 
 /* =========================
-   DAILY QUEST SYSTEM (ONLY 1 ACTIVE DAY)
+   CLAIM DAY
    ========================= */
 
 function claimDay(day) {
-  let today = new Date().toDateString();
+  let todayIndex = getTodayIndex();
 
-  if (user.dailyClaimed[today]) {
-    showPopup("You already completed today’s quest.");
+  if (day !== todayIndex) {
+    showXPMessage("Only today’s quest is available.");
     return;
   }
 
-  user.dailyClaimed[today] = day;
+  if (user.dailyClaimed[day]) {
+    showXPMessage("Already claimed today.");
+    return;
+  }
+
+  user.dailyClaimed = {};
+  user.dailyClaimed[day] = new Date().toDateString();
 
   user.xp += 20;
 
   saveUser();
-
-  showXP(20);
   updateLevelUI();
-  updateDaysUI();
 
-  showPopup(`Day ${day} completed. +20 XP earned.`);
-}
-
-/* =========================
-   BUTTON STATES
-   ========================= */
-
-function updateDaysUI() {
-  let today = new Date().toDateString();
-
-  for (let i = 1; i <= 7; i++) {
-    let btn = document.getElementById("day" + i);
-    if (!btn) continue;
-
-    if (user.dailyClaimed[today] === i) {
-      btn.innerText = "Completed";
-      btn.disabled = true;
-      btn.style.opacity = 0.5;
-    } else {
-      btn.disabled = i !== getTodayDay();
-      btn.style.opacity = i !== getTodayDay() ? 0.3 : 1;
-    }
-  }
+  showXPMessage(`Quest Complete: Day ${day} +20 XP`);
 }
 
 /* =========================
@@ -161,24 +138,15 @@ function updateStreak() {
   let today = new Date().toDateString();
 
   if (user.lastLogin !== today) {
-    if (user.lastLogin) {
-      let last = new Date(user.lastLogin);
-      let now = new Date(today);
-
-      let diff = (now - last) / (1000 * 60 * 60 * 24);
-
-      if (diff === 1) user.streak += 1;
-      else user.streak = 1;
-    } else {
-      user.streak = 1;
-    }
-
+    user.streak = user.lastLogin ? user.streak + 1 : 1;
     user.lastLogin = today;
   }
+
+  saveUser();
 }
 
 /* =========================
-   POPUPS
+   XP POPUP
    ========================= */
 
 function showXP(amount) {
@@ -187,32 +155,24 @@ function showXP(amount) {
   popup.innerText = `+${amount} XP`;
 
   document.body.appendChild(popup);
-
   setTimeout(() => popup.remove(), 1200);
 }
 
-let popupActive = false;
+/* =========================
+   CENTER MESSAGE POPUP
+   ========================= */
 
-function showPopup(message) {
-  if (popupActive) return;
-
-  popupActive = true;
-
+function showXPMessage(message) {
   const popup = document.createElement("div");
   popup.className = "center-popup";
   popup.innerText = message;
 
   document.body.appendChild(popup);
 
-  let timeout = setTimeout(() => {
-    popup.remove();
-    popupActive = false;
-  }, 5000);
+  setTimeout(() => popup.remove(), 5000);
 
   document.addEventListener("click", function handler() {
     popup.remove();
-    popupActive = false;
-    clearTimeout(timeout);
     document.removeEventListener("click", handler);
   });
 }
@@ -223,18 +183,4 @@ function showPopup(message) {
 
 function saveUser() {
   localStorage.setItem("user", JSON.stringify(user));
-}
-
-/* =========================
-   NAV (optional safe)
-   ========================= */
-
-function enterClass(className) {
-  localStorage.setItem("currentClass", className);
-  window.location.href = "class.html";
-}
-
-function openLesson(url) {
-  localStorage.setItem("lessonLink", url);
-  window.location.href = "lesson.html";
 }
