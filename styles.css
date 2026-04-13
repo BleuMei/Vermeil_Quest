@@ -1,7 +1,7 @@
 /* =========================
-   FONTS
+   FONTS (FANTASY UNIFIED SYSTEM)
    ========================= */
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Cinzel:wght@400;600&family=Rajdhani:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Rajdhani:wght@400;500;600&display=swap');
 
 /* =========================
    BASE
@@ -9,7 +9,7 @@
 
 body {
   margin: 0;
-  font-family: "Poppins", sans-serif;
+  font-family: "Rajdhani", sans-serif;
   text-align: center;
   color: #e5e7eb;
   min-height: 100vh;
@@ -19,7 +19,7 @@ body {
   overflow-x: hidden;
 }
 
-/* background particles */
+/* magic particles */
 body::before {
   content: "";
   position: fixed;
@@ -36,25 +36,27 @@ body::before {
   to { transform: translateY(-250px); }
 }
 
-/* keep UI above background */
+/* keep UI above bg */
 body > * {
   position: relative;
   z-index: 1;
 }
 
 /* =========================
-   TYPOGRAPHY
+   TYPOGRAPHY (FANTASY HIERARCHY)
    ========================= */
 
 h1 {
   font-family: "Cinzel", serif;
-  font-size: 30px;
+  font-size: 32px;
   color: #93c5fd;
-  text-shadow: 0 0 18px rgba(96,165,250,0.3);
+  text-shadow: 0 0 18px rgba(96,165,250,0.35);
 }
 
 h2 {
+  font-family: "Cinzel", serif;
   font-size: 20px;
+  color: #cbd5e1;
 }
 
 p {
@@ -80,7 +82,7 @@ p {
 }
 
 /* =========================
-   LOGIN
+   LOGIN CARD
    ========================= */
 
 .center-card {
@@ -91,7 +93,7 @@ p {
 }
 
 /* =========================
-   INPUTS
+   INPUTS (ARCANE UI TEXT)
    ========================= */
 
 input {
@@ -118,13 +120,14 @@ input:focus {
    ========================= */
 
 button {
+  font-family: "Cinzel", serif;
   background: linear-gradient(135deg, #3b82f6, #60a5fa);
   border: none;
   padding: 12px;
   border-radius: 12px;
   color: white;
   cursor: pointer;
-  font-weight: 500;
+  font-weight: 600;
   transition: all 0.2s ease;
   box-shadow: 0 0 15px rgba(59,130,246,0.25);
   margin-top: 10px;
@@ -136,18 +139,18 @@ button:hover {
 }
 
 /* =========================
-   PROFILE (FIXED SIZE FEEL)
+   PROFILE (compact, not stretched)
    ========================= */
 
 .profile-card {
   width: fit-content;
-  max-width: 350px;
+  max-width: 360px;
   margin: 20px auto;
   padding: 20px;
 }
 
 /* =========================
-   CLASS GRID (FIXED — NO FULL WIDTH STRETCH)
+   CLASS GRID (FIXED CLICK + SIZE)
    ========================= */
 
 .class-grid {
@@ -158,7 +161,7 @@ button:hover {
   padding: 15px;
 }
 
-/* FIXED CLASS CARD SIZE */
+/* CLASS CARD (CLICK SAFE) */
 .class-card {
   display: inline-block;
   width: auto;
@@ -167,17 +170,14 @@ button:hover {
   padding: 16px;
   cursor: pointer;
   text-align: center;
+  font-family: "Cinzel", serif;
+  pointer-events: auto;
 }
 
 .class-card:hover {
   transform: translateY(-6px);
   box-shadow: 0 0 25px rgba(59,130,246,0.5);
   border-color: #60a5fa;
-}
-
-/* SAFETY: ensure clickable */
-.class-card {
-  pointer-events: auto;
 }
 
 /* =========================
@@ -219,12 +219,11 @@ button:hover {
   font-size: 18px;
   color: white;
   z-index: 99999;
-  box-shadow: 0 0 40px rgba(59,130,246,0.4);
   text-align: center;
 }
 
 /* =========================
-   DAILY GRID (CLEAN APP STYLE)
+   DAILY GRID (CLEAN BUT COMPACT)
    ========================= */
 
 .day-grid {
@@ -241,6 +240,7 @@ button:hover {
   background: rgba(255,255,255,0.08);
   border: 1px solid rgba(147,197,253,0.2);
   cursor: pointer;
+  font-family: "Cinzel", serif;
   transition: 0.2s;
   font-size: 14px;
 }
@@ -265,7 +265,7 @@ button:hover {
    ========================= */
 
 @media (max-width: 600px) {
-  h1 { font-size: 22px; }
+  h1 { font-size: 24px; }
   h2 { font-size: 18px; }
 
   .day-grid {
