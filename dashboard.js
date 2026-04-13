@@ -46,25 +46,29 @@ user.dailyClaimed ??= {};
 let userRef;
 
 /* =========================
-   SAFE INIT (IMPORTANT FIX)
+   SAFE INIT (NO MORE GRAY SCREEN)
 ========================= */
 
 document.addEventListener("DOMContentLoaded", init);
 
 async function init() {
-  await loadUserFromFirebase();
+  try {
+    await loadUserFromFirebase();
 
-  renderUI();
-  updateLevelUI();
-  highlightToday();
-  syncStreakUI();
+    renderUI();
+    updateLevelUI();
+    highlightToday();
+    syncStreakUI();
+    attachDayListeners();
 
-  // IMPORTANT: make sure clicks work even if HTML was dynamic
-  attachDayListeners();
+    console.log("Dashboard loaded successfully");
+  } catch (err) {
+    console.error("Dashboard crash prevented:", err);
+  }
 }
 
 /* =========================
-   FIREBASE LOAD
+   FIREBASE LOAD (SAFE)
 ========================= */
 
 async function loadUserFromFirebase() {
@@ -81,7 +85,7 @@ async function loadUserFromFirebase() {
 
     saveLocal();
   } catch (err) {
-    console.log("Firebase error:", err);
+    console.log("Firebase failed, offline mode:", err);
   }
 }
 
@@ -97,15 +101,16 @@ function renderUI() {
   if (name) name.innerText = user.name || "Unknown";
   if (id) id.innerText = user.id;
 
-  if (user.section && section) {
+  if (user.section && section && !document.getElementById("sectionText")) {
     const p = document.createElement("p");
+    p.id = "sectionText";
     p.innerText = `Section: ${user.section}`;
     section.appendChild(p);
   }
 }
 
 /* =========================
-   SAVE
+   SAVE SYSTEM
 ========================= */
 
 async function saveUser() {
@@ -125,7 +130,7 @@ function saveLocal() {
 }
 
 /* =========================
-   LESSON REDIRECT (GLOBAL FIX)
+   LESSON NAVIGATION (GLOBAL SAFE)
 ========================= */
 
 window.openLesson = function (url) {
@@ -146,7 +151,7 @@ function addXP(amount = 10) {
 }
 
 /* =========================
-   LEVEL / MANA BAR
+   LEVEL + MANA BAR
 ========================= */
 
 function updateLevelUI() {
@@ -187,7 +192,10 @@ function todayStr() {
   return new Date().toDateString();
 }
 
-/* VISUAL HIGHLIGHT */
+/* =========================
+   VISUAL HIGHLIGHT (SAFE)
+========================= */
+
 function highlightToday() {
   const today = todayIndex();
 
@@ -204,7 +212,7 @@ function highlightToday() {
 }
 
 /* =========================
-   FIX: ENSURE CLICK WORKS
+   CLICK FIX (NO DEAD BUTTONS EVER AGAIN)
 ========================= */
 
 function attachDayListeners() {
@@ -214,13 +222,17 @@ function attachDayListeners() {
     if (!el) continue;
 
     el.style.cursor = "pointer";
+    el.style.pointerEvents = "auto";
 
-    el.onclick = () => claimDay(i);
+    el.onclick = (e) => {
+      e.stopPropagation();
+      claimDay(i);
+    };
   }
 }
 
 /* =========================
-   CLAIM DAY (FIXED STREAK + POPUP)
+   CLAIM DAY (DUOLINGO-STYLE STREAK)
 ========================= */
 
 window.claimDay = function (day) {
@@ -234,13 +246,15 @@ window.claimDay = function (day) {
     return popup("Already claimed today.");
   }
 
+  // mark claim
   user.lastClaimDate = todayStr();
   user.dailyClaimed = {};
   user.dailyClaimed[day] = true;
 
+  // XP reward
   user.xp += 20;
 
-  // streak logic (simple but stable)
+  // streak logic (stable + Duolingo-ish)
   const yesterday = new Date();
   yesterday.setDate(yesterday.getDate() - 1);
 
@@ -257,7 +271,7 @@ window.claimDay = function (day) {
   syncStreakUI();
 
   showXP(20);
-  popup("Quest cleared +20 XP 🔥 Streak: " + user.streak);
+  popup(`Quest cleared +20 XP 🔥 Streak: ${user.streak}`);
 };
 
 /* =========================
@@ -292,7 +306,7 @@ function popup(text) {
 }
 
 /* =========================
-   LEVEL UP
+   LEVEL UP SCREEN
 ========================= */
 
 function showLevelUpScreen(level) {
