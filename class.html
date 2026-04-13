@@ -7,13 +7,25 @@
 
 <body>
 
-  <h1 id="classTitle">Class</h1>
+  <h1 id="classTitle"></h1>
 
+  <!-- LESSON -->
   <div class="center-card">
-    <h2>Lesson Quest</h2>
-    <p>Read notes and complete quiz to earn XP.</p>
+    <h2>Lesson</h2>
+    <p id="lessonText">
+      Loading lesson...
+    </p>
+  </div>
 
-    <button onclick="completeLesson()">Complete Lesson (+20 XP)</button>
+  <!-- QUIZ -->
+  <div class="center-card">
+    <h2>Quick Quiz</h2>
+
+    <p id="question"></p>
+
+    <div id="choices"></div>
+
+    <button onclick="submitAnswer()">Submit Answer</button>
   </div>
 
   <script src="class.js"></script>
