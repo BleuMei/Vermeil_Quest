@@ -274,3 +274,67 @@ button:hover {
 
   button { width: 100%; }
 }
+
+/* =========================
+   ARCANE DAILY RUNE SYSTEM
+   ========================= */
+
+.day-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-top: 15px;
+  padding: 0 10px;
+}
+
+.day-box {
+  font-family: "Cinzel", serif;
+  padding: 14px;
+  border-radius: 14px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(147,197,253,0.2);
+  cursor: pointer;
+  transition: all 0.25s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+/* hover = magical lift */
+.day-box:hover {
+  transform: translateY(-4px) scale(1.05);
+  border-color: #60a5fa;
+  box-shadow: 0 0 20px rgba(96,165,250,0.25);
+}
+
+/* ACTIVE DAY = glowing rune */
+.day-box.active {
+  border: 1px solid #60a5fa;
+  box-shadow: 0 0 18px rgba(96,165,250,0.5);
+  animation: pulseRune 2s infinite;
+}
+
+/* LOCKED DAY = sealed magic */
+.day-box.locked {
+  opacity: 0.35;
+  filter: grayscale(60%);
+  pointer-events: none;
+}
+
+/* click feedback */
+.day-box.clicked {
+  animation: flash 0.4s ease;
+}
+
+/* glow pulse */
+@keyframes pulseRune {
+  0% { box-shadow: 0 0 10px rgba(96,165,250,0.3); }
+  50% { box-shadow: 0 0 25px rgba(96,165,250,0.6); }
+  100% { box-shadow: 0 0 10px rgba(96,165,250,0.3); }
+}
+
+/* click flash */
+@keyframes flash {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.15); background: rgba(96,165,250,0.25); }
+  100% { transform: scale(1); }
+}
