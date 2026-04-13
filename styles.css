@@ -114,11 +114,10 @@ button:hover {
    ========================= */
 
 .class-grid {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 18px;
-  margin-top: 20px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 15px;
+  padding: 0 15px;
 }
 
 /* CLASS CARD */
