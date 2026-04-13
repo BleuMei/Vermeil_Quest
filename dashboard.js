@@ -45,5 +45,10 @@ function updateStreak() {
   }
 }
 
+function enterClass(className) {
+  localStorage.setItem("currentClass", className);
+  window.location.href = "class.html";
+}
+
 updateStreak();
 loadUser();
