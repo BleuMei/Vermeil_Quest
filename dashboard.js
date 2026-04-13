@@ -182,12 +182,12 @@ function claimDay(day) {
   user.dailyClaimed[day] = new Date().toDateString();
 
   user.xp += 20;
-  showChest();
+ 
 
   saveUser();
   updateLevelUI();
   highlightToday();
-
+  showChest();
   showPopup(`Quest Complete: Day ${day} +20 XP`);
 }
 
