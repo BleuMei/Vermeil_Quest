@@ -328,3 +328,34 @@ async function addStudent(db, studentId, name, section) {
     dailyClaimed: {}
   });
 }
+
+import { db } from "./firebase.js";
+import { doc, getDoc } from "firebase/firestore";
+
+async function login() {
+  const id = document.getElementById("studentId").value;
+
+  if (!id) return alert("Enter ID");
+
+  const ref = doc(db, "students", id);
+  const snap = await getDoc(ref);
+
+  if (!snap.exists()) {
+    alert("Student not found");
+    return;
+  }
+
+  const userData = snap.data();
+
+  // save locally (so dashboard works)
+  localStorage.setItem("user", JSON.stringify({
+    id: id,
+    name: userData.name,
+    section: userData.section,
+    xp: userData.xp,
+    level: userData.level,
+    streak: userData.streak
+  }));
+
+  window.location.href = "dashboard.html";
+}
