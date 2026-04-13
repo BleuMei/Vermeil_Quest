@@ -4,7 +4,10 @@ if (!user) {
   window.location.href = "index.html";
 }
 
-/* SAFE DEFAULTS */
+/* =========================
+   SAFE DEFAULTS
+   ========================= */
+
 user.xp = user.xp || 0;
 user.level = user.level || 1;
 user.streak = user.streak || 0;
@@ -28,20 +31,19 @@ window.onload = () => {
    ========================= */
 
 function loadUser() {
-  document.getElementById("name").innerText = user.name;
-  document.getElementById("id").innerText = user.id;
+  const nameEl = document.getElementById("name");
+  const idEl = document.getElementById("id");
+
+  if (nameEl) nameEl.innerText = user.name;
+  if (idEl) idEl.innerText = user.id;
 }
 
 /* =========================
-   CLASS NAVIGATION (FIXED SAFE)
+   CLASS NAVIGATION (FIXED)
    ========================= */
 
 function openLesson(url) {
   if (!url) return;
-
-  localStorage.setItem("lessonLink", url);
-
-  // force navigation (extra safety)
   window.location.href = url;
 }
 
@@ -51,7 +53,6 @@ function openLesson(url) {
 
 function addXP(amount = 10) {
   user.xp += amount;
-
   saveUser();
   showXP(amount);
   updateLevelUI();
@@ -104,22 +105,17 @@ function highlightToday() {
 }
 
 /* =========================
-   DAILY POPUP (LOGIN EVENT)
+   DAILY POPUP (LOGIN)
    ========================= */
 
 let popupOpen = false;
-let popupElement = null;
 
 function showDailyPopup() {
   if (popupOpen) return;
   popupOpen = true;
 
-  // remove old popup if stuck
-  if (popupElement) popupElement.remove();
-
   const popup = document.createElement("div");
   popup.className = "center-popup";
-  popupElement = popup;
 
   const today = getTodayIndex();
 
@@ -140,25 +136,20 @@ function showDailyPopup() {
 
   document.body.appendChild(popup);
 
-  const timeout = setTimeout(() => {
-    closePopup();
-  }, 5000);
+  const timeout = setTimeout(close, 5000);
 
-  function closePopup() {
-    if (!popupOpen) return;
-
+  function close() {
     popupOpen = false;
     popup.remove();
-    popupElement = null;
     clearTimeout(timeout);
-    document.removeEventListener("click", outsideClick);
+    document.removeEventListener("click", outside);
   }
 
-  function outsideClick() {
-    closePopup();
+  function outside() {
+    close();
   }
 
-  document.addEventListener("click", outsideClick);
+  document.addEventListener("click", outside);
 }
 
 /* =========================
@@ -182,11 +173,11 @@ function claimDay(day) {
   user.dailyClaimed[day] = new Date().toDateString();
 
   user.xp += 20;
- 
 
   saveUser();
   updateLevelUI();
   highlightToday();
+
   showChest();
   showPopup(`Quest Complete: Day ${day} +20 XP`);
 }
@@ -242,25 +233,15 @@ function showPopup(message) {
 }
 
 /* =========================
-   SAVE
-   ========================= */
-
-function saveUser() {
-  localStorage.setItem("user", JSON.stringify(user));
-}
-
-/* =========================
-   BURGER MENU LOGIC
+   BURGER MENU
    ========================= */
 
 function toggleMenu() {
-  const menu = document.getElementById("sideMenu");
-  menu.classList.toggle("open");
+  document.getElementById("sideMenu")?.classList.toggle("open");
 }
 
 function closeMenu() {
-  const menu = document.getElementById("sideMenu");
-  if (menu) menu.classList.remove("open");
+  document.getElementById("sideMenu")?.classList.remove("open");
 }
 
 function logout() {
@@ -269,29 +250,26 @@ function logout() {
 }
 
 /* =========================
-   CHEST REWARD SYSTEM
+   CHEST SYSTEM
    ========================= */
 
 function showChest() {
   const chest = document.getElementById("rewardChest");
-
   if (!chest) return;
 
   chest.classList.remove("hidden");
   chest.classList.add("shake");
 
-  setTimeout(() => {
-    chest.classList.remove("shake");
-  }, 1200);
+  setTimeout(() => chest.classList.remove("shake"), 1000);
 }
 
 function openChest() {
   const chest = document.getElementById("rewardChest");
+  if (!chest) return;
 
   chest.innerText = "✨";
   chest.classList.remove("shake");
 
-  // reward logic
   let reward = 20;
 
   user.xp += reward;
@@ -300,9 +278,7 @@ function openChest() {
 
   showFloatingReward(`+${reward} XP`);
 
-  setTimeout(() => {
-    chest.classList.add("hidden");
-  }, 800);
+  setTimeout(() => chest.classList.add("hidden"), 800);
 }
 
 function showFloatingReward(text) {
@@ -311,6 +287,13 @@ function showFloatingReward(text) {
   popup.innerText = text;
 
   document.body.appendChild(popup);
-
   setTimeout(() => popup.remove(), 1200);
+}
+
+/* =========================
+   SAVE
+   ========================= */
+
+function saveUser() {
+  localStorage.setItem("user", JSON.stringify(user));
 }
