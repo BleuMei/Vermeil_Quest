@@ -1,5 +1,10 @@
 /* =========================
-   VERMEIL QUEST DESIGN SYSTEM
+   FONTS
+   ========================= */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Cinzel:wght@400;600&family=Rajdhani:wght@400;500;600&display=swap');
+
+/* =========================
+   BASE
    ========================= */
 
 body {
@@ -10,13 +15,15 @@ body {
   min-height: 100vh;
   font-size: 16px;
 
-  /* fantasy-tech gradient */
   background: radial-gradient(circle at top, #1b2a4a, #0b1020 45%, #050814);
   overflow-x: hidden;
 }
 
+/* REMOVE THE GLOBAL STACKING TRAP */
+/* DO NOT use * { position: relative } */
+
 /* =========================
-   MAGIC PARTICLES BACKGROUND
+   MAGIC BACKGROUND
    ========================= */
 
 body::before {
@@ -35,26 +42,42 @@ body::before {
   to { transform: translateY(-250px); }
 }
 
-/* ensure content above particles */
-* {
-  position: relative;
-  z-index: 1;
+/* =========================
+   TYPOGRAPHY
+   ========================= */
+
+h1 {
+  font-family: "Cinzel", serif;
+  font-size: 30px;
+  color: #93c5fd;
+  text-shadow: 0 0 18px rgba(96,165,250,0.3);
+}
+
+h2 {
+  font-size: 20px;
+}
+
+p {
+  color: #cbd5e1;
 }
 
 /* =========================
-   GLASS CARD SYSTEM
+   GLASS CARDS
    ========================= */
 
 .card,
 .profile-card,
 .center-card,
-.class-card {
+.class-card,
+.streak-card {
   background: rgba(255, 255, 255, 0.06);
   border: 1px solid rgba(147, 197, 253, 0.25);
   backdrop-filter: blur(14px);
   border-radius: 18px;
   box-shadow: 0 10px 30px rgba(0,0,0,0.45);
   transition: all 0.25s ease;
+  color: #e5e7eb;
+  z-index: 1;
 }
 
 /* =========================
@@ -68,22 +91,11 @@ body::before {
   padding: 25px;
 }
 
-/* =========================
-   PROFILE CARD
-   ========================= */
-
-.profile-card {
-  width: 90%;
-  max-width: 350px;
-  margin: 20px auto;
-  padding: 20px;
-}
-
-/* =========================
-   INPUTS
-   ========================= */
-
+/* INPUTS (FIXED FONT HERE) */
 input {
+  font-family: "Rajdhani", sans-serif;
+  font-size: 16px;
+
   padding: 12px;
   border-radius: 10px;
   border: 1px solid rgba(147,197,253,0.25);
@@ -92,6 +104,12 @@ input {
   color: white;
   outline: none;
   margin-top: 10px;
+  transition: 0.2s;
+}
+
+input:focus {
+  border-color: #60a5fa;
+  box-shadow: 0 0 15px rgba(96,165,250,0.3);
 }
 
 /* =========================
@@ -117,6 +135,17 @@ button:hover {
 }
 
 /* =========================
+   PROFILE CARD
+   ========================= */
+
+.profile-card {
+  width: 90%;
+  max-width: 350px;
+  margin: 20px auto;
+  padding: 20px;
+}
+
+/* =========================
    CLASS GRID
    ========================= */
 
@@ -127,7 +156,6 @@ button:hover {
   padding: 15px;
 }
 
-/* CLASS CARD */
 .class-card {
   width: 100%;
   padding: 18px;
@@ -137,16 +165,6 @@ button:hover {
   transform: translateY(-6px);
   box-shadow: 0 0 25px rgba(59,130,246,0.5);
   border-color: #60a5fa;
-}
-
-/* =========================
-   QUIZ CHOICES
-   ========================= */
-
-#choices button {
-  display: block;
-  width: 90%;
-  margin: 10px auto;
 }
 
 /* =========================
@@ -163,7 +181,7 @@ button:hover {
   font-weight: 600;
   box-shadow: 0 0 25px rgba(59,130,246,0.4);
   animation: fade 1.2s ease forwards;
-  z-index: 999;
+  z-index: 9999;
 }
 
 @keyframes fade {
@@ -173,83 +191,9 @@ button:hover {
 }
 
 /* =========================
-   TEXT STYLING
+   STREAK SYSTEM POPUP
    ========================= */
 
-h1 {
-  font-size: 26px;
-  color: #93c5fd;
-  text-shadow: 0 0 18px rgba(96,165,250,0.3);
-}
-
-h2 {
-  font-size: 20px;
-}
-
-p {
-  color: #cbd5e1;
-}
-
-/* =========================
-   MOBILE IMPROVEMENTS
-   ========================= */
-
-@media (max-width: 600px) {
-  h1 {
-    font-size: 22px;
-  }
-
-  h2 {
-    font-size: 18px;
-  }
-
-  button {
-    width: 100%;
-  }
-
-  .center-card,
-  .profile-card {
-    width: 90%;
-  }
-}
-
-.special {
-  border-color: rgba(96,165,250,0.6);
-  box-shadow: 0 0 20px rgba(59,130,246,0.4);
-}
-
-.xp-container {
-  width: 80%;
-  height: 12px;
-  background: rgba(255,255,255,0.1);
-  border-radius: 20px;
-  margin: 10px auto;
-  overflow: hidden;
-}
-
-#xpBar {
-  height: 100%;
-  width: 0%;
-  background: linear-gradient(90deg, #3b82f6, #60a5fa);
-  transition: width 0.4s ease;
-}
-
-.streak-card {
-  width: 90%;
-  max-width: 320px;
-  margin: 20px auto;
-  padding: 20px;
-  border-radius: 16px;
-  cursor: pointer;
-  transition: 0.3s;
-}
-
-.streak-card:hover {
-  transform: scale(1.03);
-  box-shadow: 0 0 25px rgba(59,130,246,0.4);
-}
-
-/* CENTER POPUP */
 .center-popup {
   position: fixed;
   top: 50%;
@@ -264,4 +208,20 @@ p {
   z-index: 9999;
   box-shadow: 0 0 40px rgba(59,130,246,0.4);
   text-align: center;
+}
+
+/* =========================
+   MOBILE
+   ========================= */
+
+@media (max-width: 600px) {
+  h1 { font-size: 22px; }
+  h2 { font-size: 18px; }
+
+  button { width: 100%; }
+
+  .center-card,
+  .profile-card {
+    width: 90%;
+  }
 }
