@@ -46,48 +46,61 @@ user.dailyClaimed ??= {};
 let userRef;
 
 /* =========================
-   INIT
+   SAFE INIT (IMPORTANT FIX)
 ========================= */
 
-window.onload = async () => {
+document.addEventListener("DOMContentLoaded", init);
+
+async function init() {
   await loadUserFromFirebase();
 
   renderUI();
   updateLevelUI();
   highlightToday();
   syncStreakUI();
-};
+
+  // IMPORTANT: make sure clicks work even if HTML was dynamic
+  attachDayListeners();
+}
 
 /* =========================
    FIREBASE LOAD
 ========================= */
 
 async function loadUserFromFirebase() {
-  userRef = doc(db, "students", user.id);
+  try {
+    userRef = doc(db, "students", user.id);
 
-  const snap = await getDoc(userRef);
+    const snap = await getDoc(userRef);
 
-  if (snap.exists()) {
-    user = { ...user, ...snap.data() };
-  } else {
-    await setDoc(userRef, user);
+    if (snap.exists()) {
+      user = { ...user, ...snap.data() };
+    } else {
+      await setDoc(userRef, user);
+    }
+
+    saveLocal();
+  } catch (err) {
+    console.log("Firebase error:", err);
   }
-
-  saveLocal();
 }
 
 /* =========================
-   UI RENDER
+   UI
 ========================= */
 
 function renderUI() {
-  document.getElementById("name").innerText = user.name || "Unknown";
-  document.getElementById("id").innerText = user.id;
+  const name = document.getElementById("name");
+  const id = document.getElementById("id");
+  const section = document.querySelector(".profile-card");
 
-  if (user.section) {
+  if (name) name.innerText = user.name || "Unknown";
+  if (id) id.innerText = user.id;
+
+  if (user.section && section) {
     const p = document.createElement("p");
     p.innerText = `Section: ${user.section}`;
-    document.querySelector(".profile-card").appendChild(p);
+    section.appendChild(p);
   }
 }
 
@@ -97,7 +110,14 @@ function renderUI() {
 
 async function saveUser() {
   saveLocal();
-  if (userRef) await updateDoc(userRef, user);
+
+  if (!userRef) return;
+
+  try {
+    await updateDoc(userRef, user);
+  } catch (err) {
+    console.log("Save failed:", err);
+  }
 }
 
 function saveLocal() {
@@ -105,7 +125,7 @@ function saveLocal() {
 }
 
 /* =========================
-   LESSON REDIRECT FIXED
+   LESSON REDIRECT (GLOBAL FIX)
 ========================= */
 
 window.openLesson = function (url) {
@@ -114,7 +134,7 @@ window.openLesson = function (url) {
 };
 
 /* =========================
-   XP + MANA BAR
+   XP SYSTEM
 ========================= */
 
 function addXP(amount = 10) {
@@ -125,6 +145,10 @@ function addXP(amount = 10) {
   showXP(amount);
 }
 
+/* =========================
+   LEVEL / MANA BAR
+========================= */
+
 function updateLevelUI() {
   const newLevel = Math.floor(user.xp / 100) + 1;
   const progress = user.xp % 100;
@@ -132,10 +156,12 @@ function updateLevelUI() {
   const leveledUp = newLevel > user.level;
   user.level = newLevel;
 
-  document.getElementById("level").innerText = newLevel;
-  document.getElementById("xp").innerText = `${progress} / 100`;
-
+  const levelEl = document.getElementById("level");
+  const xpEl = document.getElementById("xp");
   const bar = document.getElementById("xpBar");
+
+  if (levelEl) levelEl.innerText = newLevel;
+  if (xpEl) xpEl.innerText = `${progress} / 100`;
 
   if (bar) {
     bar.style.width = `${progress}%`;
@@ -150,7 +176,7 @@ function updateLevelUI() {
 }
 
 /* =========================
-   DAILY QUEST SYSTEM
+   DAILY SYSTEM
 ========================= */
 
 function todayIndex() {
@@ -178,7 +204,23 @@ function highlightToday() {
 }
 
 /* =========================
-   CLAIM DAY (FIXED + FEEDBACK)
+   FIX: ENSURE CLICK WORKS
+========================= */
+
+function attachDayListeners() {
+  for (let i = 1; i <= 7; i++) {
+    const el = document.getElementById("day" + i);
+
+    if (!el) continue;
+
+    el.style.cursor = "pointer";
+
+    el.onclick = () => claimDay(i);
+  }
+}
+
+/* =========================
+   CLAIM DAY (FIXED STREAK + POPUP)
 ========================= */
 
 window.claimDay = function (day) {
@@ -192,22 +234,19 @@ window.claimDay = function (day) {
     return popup("Already claimed today.");
   }
 
-  // MARK CLAIM
   user.lastClaimDate = todayStr();
-
   user.dailyClaimed = {};
   user.dailyClaimed[day] = true;
 
-  // XP reward
   user.xp += 20;
 
-  // STREAK LOGIC (Duolingo-style simplified)
+  // streak logic (simple but stable)
   const yesterday = new Date();
   yesterday.setDate(yesterday.getDate() - 1);
 
   if (user.lastLogin === yesterday.toDateString()) {
     user.streak += 1;
-  } else if (!user.lastLogin || user.lastLogin !== todayStr()) {
+  } else {
     user.streak = 1;
   }
 
@@ -238,6 +277,7 @@ function showXP(amount) {
   const p = document.createElement("div");
   p.className = "xp-popup";
   p.innerText = `+${amount} XP`;
+
   document.body.appendChild(p);
   setTimeout(() => p.remove(), 1200);
 }
@@ -252,7 +292,7 @@ function popup(text) {
 }
 
 /* =========================
-   LEVEL UP SCREEN
+   LEVEL UP
 ========================= */
 
 function showLevelUpScreen(level) {
