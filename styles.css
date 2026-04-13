@@ -16,6 +16,7 @@ body {
   font-size: 16px;
   background: radial-gradient(circle at top, #1b2a4a, #0b1020 45%, #050814);
   overflow-x: hidden;
+  position: relative;
 }
 
 /* particles */
@@ -35,9 +36,9 @@ body::before {
   to { transform: translateY(-250px); }
 }
 
+/* SAFE LAYERING (removed dangerous global z-index rule) */
 body > * {
   position: relative;
-  z-index: 1;
 }
 
 /* =========================
@@ -142,7 +143,6 @@ button:hover {
   text-align: center;
   font-family: "Cinzel", serif;
   transition: 0.2s ease;
-  z-index: 2;
 }
 
 .class-card:hover {
@@ -151,7 +151,7 @@ button:hover {
 }
 
 /* =========================
-   XP POPUP (FIXED FADE)
+   XP POPUP
 ========================= */
 
 .xp-popup {
@@ -164,6 +164,7 @@ button:hover {
   font-weight: 600;
   z-index: 99999;
   animation: xpFade 1.2s ease forwards;
+  pointer-events: none;
 }
 
 @keyframes xpFade {
@@ -173,7 +174,7 @@ button:hover {
 }
 
 /* =========================
-   CENTER POPUP (SAFE, NO FREEZE FEEL)
+   CENTER POPUP (FIXED CRASH PROTECTION)
 ========================= */
 
 .center-popup {
@@ -184,7 +185,7 @@ button:hover {
   width: 90%;
   max-width: 420px;
 
-  background: rgba(17, 25, 40, 0.95);
+  background: rgba(17, 25, 40, 0.97);
   border: 1px solid rgba(96,165,250,0.5);
   padding: 20px;
   border-radius: 16px;
@@ -192,12 +193,18 @@ button:hover {
   z-index: 999999;
   text-align: center;
 
-  animation: popIn 0.2s ease;
+  animation: popIn 0.15s ease;
+  pointer-events: none; /* prevents click-block lockups */
 }
 
 @keyframes popIn {
   from { transform: translate(-50%, -50%) scale(0.9); opacity: 0; }
   to { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+}
+
+/* auto-hide safety (prevents stuck overlay bug) */
+.center-popup:empty {
+  display: none;
 }
 
 /* =========================
@@ -211,7 +218,6 @@ button:hover {
   margin-top: 12px;
 }
 
-/* DAY BOX */
 .day-box {
   font-family: "Cinzel", serif;
   padding: 14px;
@@ -226,8 +232,6 @@ button:hover {
   display: flex;
   align-items: center;
   justify-content: center;
-
-  z-index: 2;
 }
 
 /* hover */
@@ -236,28 +240,22 @@ button:hover {
   border-color: #60a5fa;
 }
 
-/* ACTIVE DAY (clear winner state) */
-.day-box.active {
-  border: 2px solid #60a5fa;
-  box-shadow: 0 0 25px rgba(96,165,250,0.9);
-  transform: scale(1.12);
-}
-
-/* EXTRA GLOW (used by JS) */
+/* active */
+.day-box.active,
 .day-box.glow {
   border: 2px solid #60a5fa;
-  box-shadow: 0 0 30px rgba(96,165,250,1);
+  box-shadow: 0 0 28px rgba(96,165,250,0.9);
   transform: scale(1.12);
 }
 
-/* LOCKED */
+/* locked */
 .day-box.locked {
   opacity: 0.3;
   filter: grayscale(90%);
   pointer-events: none;
 }
 
-/* CLICK FEEDBACK */
+/* click animation */
 .day-box.clicked {
   animation: clickPop 0.3s ease;
 }
@@ -269,7 +267,7 @@ button:hover {
 }
 
 /* =========================
-   XP MANA BAR
+   XP BAR
 ========================= */
 
 .xp-container {
@@ -289,7 +287,6 @@ button:hover {
   box-shadow: 0 0 12px rgba(96,165,250,0.5);
 }
 
-/* pulse */
 .mana-pulse {
   box-shadow: 0 0 25px rgba(96,165,250,0.8) !important;
 }
@@ -306,6 +303,7 @@ button:hover {
   justify-content: center;
   align-items: center;
   z-index: 999999;
+  text-align: center;
 }
 
 .level-up h1 {
