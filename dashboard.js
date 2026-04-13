@@ -15,18 +15,18 @@ user.lastLogin = user.lastLogin || null;
 window.onload = () => {
   loadUser();
   updateStreak();
-  showDailyPopup(); // THIS is your login popup
+  updateLevelUI();
+  highlightToday();
+  showDailyPopup();
 };
 
 /* =========================
-   UI LOAD
+   LOAD USER
    ========================= */
 
 function loadUser() {
   document.getElementById("name").innerText = user.name;
   document.getElementById("id").innerText = user.id;
-
-  updateLevelUI();
 }
 
 /* =========================
@@ -60,22 +60,49 @@ function updateLevelUI() {
 }
 
 /* =========================
-   DAILY POPUP (7 DAYS BOX)
+   DAILY SYSTEM (MAIN FIX)
+   ========================= */
+
+function getTodayIndex() {
+  return (new Date().getDate() % 7) + 1;
+}
+
+/* highlight active day in MAIN UI */
+function highlightToday() {
+  let today = getTodayIndex();
+
+  for (let i = 1; i <= 7; i++) {
+    let el = document.getElementById("day" + i);
+    if (!el) continue;
+
+    el.classList.remove("active", "locked");
+
+    if (i === today) {
+      el.classList.add("active");
+    } else {
+      el.classList.add("locked");
+    }
+  }
+}
+
+/* =========================
+   LOGIN POPUP (FIXED)
    ========================= */
 
 function showDailyPopup() {
-  const popup = document.getElementById("dailyPopup");
+  const popup = document.createElement("div");
+  popup.className = "center-popup";
 
   const days = Array.from({ length: 7 }, (_, i) => i + 1);
-
-  let todayIndex = getTodayIndex(); // only ONE active day
+  const today = getTodayIndex();
 
   popup.innerHTML = `
-    <h3>Daily Quest</h3>
-    <p>Claim your reward for today</p>
+    <h3>Daily Quest Unlocked</h3>
+    <p>Only today’s quest is available</p>
+
     <div class="day-grid">
       ${days.map(day => `
-        <div class="day-box ${day === todayIndex ? "active" : "locked"}"
+        <div class="day-box ${day === today ? "active" : "locked"}"
              onclick="claimDay(${day})">
           Day ${day}
         </div>
@@ -83,11 +110,15 @@ function showDailyPopup() {
     </div>
   `;
 
-  popup.classList.remove("hidden");
+  document.body.appendChild(popup);
 
   let timeout = setTimeout(() => {
     popup.remove();
   }, 5000);
+
+  popup.addEventListener("click", (e) => {
+    e.stopPropagation();
+  });
 
   document.addEventListener("click", function handler() {
     popup.remove();
@@ -96,26 +127,20 @@ function showDailyPopup() {
   });
 }
 
-/* ONLY ONE DAY PER DAY */
-function getTodayIndex() {
-  let today = new Date().getDate();
-  return (today % 7) + 1;
-}
-
 /* =========================
    CLAIM DAY
    ========================= */
 
 function claimDay(day) {
-  let todayIndex = getTodayIndex();
+  let today = getTodayIndex();
 
-  if (day !== todayIndex) {
-    showXPMessage("Only today’s quest is available.");
+  if (day !== today) {
+    showPopup("Not available yet. Come back on your assigned day.");
     return;
   }
 
   if (user.dailyClaimed[day]) {
-    showXPMessage("Already claimed today.");
+    showPopup("Already claimed today.");
     return;
   }
 
@@ -127,7 +152,8 @@ function claimDay(day) {
   saveUser();
   updateLevelUI();
 
-  showXPMessage(`Quest Complete: Day ${day} +20 XP`);
+  showPopup(`Quest Complete: Day ${day} +20 XP`);
+  highlightToday();
 }
 
 /* =========================
@@ -146,7 +172,7 @@ function updateStreak() {
 }
 
 /* =========================
-   XP POPUP
+   XP POPUP (small + fast)
    ========================= */
 
 function showXP(amount) {
@@ -159,22 +185,19 @@ function showXP(amount) {
 }
 
 /* =========================
-   CENTER MESSAGE POPUP
+   CENTER POPUP (5s stable)
    ========================= */
 
-function showXPMessage(message) {
+function showPopup(message) {
   const popup = document.createElement("div");
   popup.className = "center-popup";
   popup.innerText = message;
 
   document.body.appendChild(popup);
 
-  setTimeout(() => popup.remove(), 5000);
-
-  document.addEventListener("click", function handler() {
+  setTimeout(() => {
     popup.remove();
-    document.removeEventListener("click", handler);
-  });
+  }, 5000);
 }
 
 /* =========================
