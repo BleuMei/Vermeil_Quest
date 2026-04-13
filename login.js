@@ -4,7 +4,7 @@ function login() {
 
   // fake database
   const users = [
-    { id: "2023-001", password: "1234", name: "Student One", xp: 0, streak: 0 }
+    { id: "2301040030", password: "2301040030", name: "Kraeza Mae Tabinga", xp: 0, streak: 0 }
   ];
 
   const user = users.find(u => u.id === id && u.password === pass);
