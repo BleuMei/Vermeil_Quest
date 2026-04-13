@@ -66,6 +66,8 @@ function updateLevelUI() {
   let level = Math.floor(user.xp / 100) + 1;
   let progress = user.xp % 100;
 
+  const leveledUp = user.level && level > user.level;
+
   user.level = level;
 
   const levelEl = document.getElementById("level");
@@ -74,9 +76,23 @@ function updateLevelUI() {
 
   if (levelEl) levelEl.innerText = level;
   if (xpEl) xpEl.innerText = `${progress} / 100`;
-  if (bar) bar.style.width = `${progress}%`;
+
+  if (bar) {
+    bar.style.transition = "width 0.6s ease";
+    bar.style.width = `${progress}%`;
+
+    // mana glow pulse
+    bar.style.boxShadow = "0 0 18px rgba(96,165,250,0.6)";
+    setTimeout(() => {
+      bar.style.boxShadow = "0 0 8px rgba(96,165,250,0.2)";
+    }, 600);
+  }
 
   saveUser();
+
+  if (leveledUp) {
+    showLevelUpScreen(level);
+  }
 }
 
 /* =========================
