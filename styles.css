@@ -1,5 +1,5 @@
 /* =========================
-   FONTS (FANTASY UNIFIED SYSTEM)
+   FONTS
 ========================= */
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Rajdhani:wght@400;500;600&display=swap');
 
@@ -14,7 +14,6 @@ body {
   color: #e5e7eb;
   min-height: 100vh;
   font-size: 16px;
-
   background: radial-gradient(circle at top, #1b2a4a, #0b1020 45%, #050814);
   overflow-x: hidden;
 }
@@ -52,18 +51,12 @@ h1 {
   text-shadow: 0 0 18px rgba(96,165,250,0.35);
 }
 
-h2 {
-  font-family: "Cinzel", serif;
-  font-size: 20px;
-  color: #cbd5e1;
-}
-
-p {
+h2, p {
   color: #cbd5e1;
 }
 
 /* =========================
-   GLASS UI
+   CARDS
 ========================= */
 
 .profile-card,
@@ -101,6 +94,7 @@ input {
   background: rgba(0,0,0,0.35);
   color: white;
   margin-top: 10px;
+  outline: none;
 }
 
 input:focus {
@@ -147,6 +141,8 @@ button:hover {
   cursor: pointer;
   text-align: center;
   font-family: "Cinzel", serif;
+  transition: 0.2s ease;
+  z-index: 2;
 }
 
 .class-card:hover {
@@ -155,7 +151,7 @@ button:hover {
 }
 
 /* =========================
-   XP POPUP
+   XP POPUP (FIXED FADE)
 ========================= */
 
 .xp-popup {
@@ -166,17 +162,18 @@ button:hover {
   padding: 10px 15px;
   border-radius: 12px;
   font-weight: 600;
-  animation: fade 1.2s forwards;
-  z-index: 9999;
+  z-index: 99999;
+  animation: xpFade 1.2s ease forwards;
 }
 
-@keyframes fade {
+@keyframes xpFade {
   0% { opacity: 0; transform: translateY(-10px); }
+  15% { opacity: 1; }
   100% { opacity: 0; transform: translateY(-25px); }
 }
 
 /* =========================
-   CENTER POPUP
+   CENTER POPUP (SAFE, NO FREEZE FEEL)
 ========================= */
 
 .center-popup {
@@ -194,6 +191,13 @@ button:hover {
 
   z-index: 999999;
   text-align: center;
+
+  animation: popIn 0.2s ease;
+}
+
+@keyframes popIn {
+  from { transform: translate(-50%, -50%) scale(0.9); opacity: 0; }
+  to { transform: translate(-50%, -50%) scale(1); opacity: 1; }
 }
 
 /* =========================
@@ -204,8 +208,10 @@ button:hover {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 10px;
+  margin-top: 12px;
 }
 
+/* DAY BOX */
 .day-box {
   font-family: "Cinzel", serif;
   padding: 14px;
@@ -218,54 +224,52 @@ button:hover {
   transition: 0.2s ease;
 
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
+
+  z-index: 2;
 }
 
 /* hover */
 .day-box:hover {
-  transform: scale(1.05);
+  transform: scale(1.06);
   border-color: #60a5fa;
 }
 
-/* ACTIVE DAY (IMPORTANT FIX) */
-.day-box.active,
-.day-box.glow {
+/* ACTIVE DAY (clear winner state) */
+.day-box.active {
   border: 2px solid #60a5fa;
-  box-shadow: 0 0 28px rgba(96,165,250,0.9);
+  box-shadow: 0 0 25px rgba(96,165,250,0.9);
   transform: scale(1.12);
 }
 
-/* TODAY PULSE */
-.day-box.today-glow {
-  animation: pulseGlow 1.2s infinite alternate;
-}
-
-@keyframes pulseGlow {
-  from { box-shadow: 0 0 10px rgba(96,165,250,0.4); }
-  to { box-shadow: 0 0 30px rgba(96,165,250,1); }
+/* EXTRA GLOW (used by JS) */
+.day-box.glow {
+  border: 2px solid #60a5fa;
+  box-shadow: 0 0 30px rgba(96,165,250,1);
+  transform: scale(1.12);
 }
 
 /* LOCKED */
 .day-box.locked {
-  opacity: 0.25;
+  opacity: 0.3;
   filter: grayscale(90%);
   pointer-events: none;
 }
 
 /* CLICK FEEDBACK */
 .day-box.clicked {
-  animation: clickBurst 0.35s ease;
+  animation: clickPop 0.3s ease;
 }
 
-@keyframes clickBurst {
+@keyframes clickPop {
   0% { transform: scale(1); }
   50% { transform: scale(1.2); }
   100% { transform: scale(1); }
 }
 
 /* =========================
-   XP MANA BAR (FIXED + CLEAN)
+   XP MANA BAR
 ========================= */
 
 .xp-container {
@@ -285,7 +289,7 @@ button:hover {
   box-shadow: 0 0 12px rgba(96,165,250,0.5);
 }
 
-/* mana pulse */
+/* pulse */
 .mana-pulse {
   box-shadow: 0 0 25px rgba(96,165,250,0.8) !important;
 }
