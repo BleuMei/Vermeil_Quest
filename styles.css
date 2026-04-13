@@ -309,3 +309,48 @@ button:hover {
 
   button { width: 100%; }
 }
+
+/* =========================
+   BURGER MENU SYSTEM
+   ========================= */
+
+.burger {
+  position: fixed;
+  top: 15px;
+  left: 15px;
+  font-size: 28px;
+  cursor: pointer;
+  z-index: 10000;
+  color: #93c5fd;
+  font-family: "Cinzel", serif;
+}
+
+.side-menu {
+  position: fixed;
+  top: 0;
+  left: -260px;
+  width: 220px;
+  height: 100%;
+  background: rgba(10, 15, 30, 0.95);
+  border-right: 1px solid rgba(147,197,253,0.3);
+  backdrop-filter: blur(12px);
+  padding: 20px;
+  transition: 0.3s ease;
+  z-index: 9999;
+}
+
+.side-menu.open {
+  left: 0;
+}
+
+.side-menu h3 {
+  font-family: "Cinzel", serif;
+  color: #93c5fd;
+  margin-bottom: 15px;
+}
+
+.side-menu button {
+  width: 100%;
+  margin-bottom: 10px;
+  font-family: "Cinzel", serif;
+}
