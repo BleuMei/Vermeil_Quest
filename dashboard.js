@@ -106,5 +106,40 @@ function updateDays() {
   }
 }
 
+function claimStreak() {
+  let user = JSON.parse(localStorage.getItem("user"));
+  let today = new Date().toDateString();
+
+  // already claimed today
+  if (user.lastLogin === today) {
+    showPopup("⚠️ You already claimed today’s reward.");
+    return;
+  }
+
+  // update streak
+  if (user.lastLogin) {
+    let last = new Date(user.lastLogin);
+    let now = new Date(today);
+
+    let diff = (now - last) / (1000 * 60 * 60 * 24);
+
+    if (diff === 1) {
+      user.streak += 1; // continue streak
+    } else {
+      user.streak = 1; // reset streak
+    }
+  } else {
+    user.streak = 1;
+  }
+
+  user.lastLogin = today;
+  user.xp += 20;
+
+  localStorage.setItem("user", JSON.stringify(user));
+
+  updateUI();
+  showPopup(`🔥 Day ${user.streak} streak claimed! +20 XP awarded.`);
+}
+
 updateStreak();
 loadUser();
