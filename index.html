@@ -1,9 +1,30 @@
-<h1>Vermeil Quest</h1>
-<p>A gamified learning world for curious minds</p>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Vermeil Quest</title>
 
-<div class="card">
-  <h2>Enter Class Code</h2>
-  <input type="text" id="classCode" placeholder="e.g. CPE101">
-  <br><br>
-  <button onclick="enterClass()">Enter Quest</button>
-</div>
+  <link rel="stylesheet" href="styles.css">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+  <div class="center-card">
+    <h1>Vermeil Quest</h1>
+    <p class="subtitle">Gamified Learning System</p>
+
+    <input id="studentId" placeholder="Student ID">
+    <br><br>
+    <input id="password" type="password" placeholder="Password">
+    <br><br>
+
+    <button onclick="login()">Enter Quest</button>
+  </div>
+
+  <script src="login.js"></script>
+</body>
+</html>
