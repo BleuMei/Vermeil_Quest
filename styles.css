@@ -1,38 +1,87 @@
+/* =========================
+   VERMEIL QUEST DESIGN SYSTEM
+   ========================= */
+
 body {
   margin: 0;
   font-family: "Poppins", sans-serif;
   text-align: center;
   color: #e5e7eb;
-
   min-height: 100vh;
 
-  background: radial-gradient(circle at top, #1b2a4a, #0b1020 40%, #050814);
+  /* fantasy-tech gradient */
+  background: radial-gradient(circle at top, #1b2a4a, #0b1020 45%, #050814);
   overflow-x: hidden;
 }
 
-/* LOGIN CARD */
-.center-card {
-  margin-top: 120px;
-  background: rgba(17, 25, 40, 0.7);
-  padding: 30px;
-  width: 300px;
-  margin-left: auto;
-  margin-right: auto;
-  border-radius: 16px;
-  border: 1px solid rgba(147, 197, 253, 0.3);
+/* floating magic particles */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(circle, rgba(96,165,250,0.12) 2px, transparent 3px);
+  background-size: 90px 90px;
+  animation: drift 25s linear infinite;
+  pointer-events: none;
+  z-index: 0;
 }
 
-/* INPUT */
+@keyframes drift {
+  from { transform: translateY(0px); }
+  to { transform: translateY(-250px); }
+}
+
+/* ensure content above particles */
+h1, h2, p, div, input, button {
+  position: relative;
+  z-index: 1;
+}
+
+/* =========================
+   GLASS CARD BASE (ONE STYLE ONLY)
+   ========================= */
+
+.card,
+.profile-card,
+.center-card,
+.class-card {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(147, 197, 253, 0.25);
+  backdrop-filter: blur(14px);
+  border-radius: 18px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.45);
+  transition: all 0.25s ease;
+  color: #e5e7eb;
+}
+
+/* =========================
+   LOGIN CARD
+   ========================= */
+
+.center-card {
+  width: 320px;
+  margin: 120px auto;
+  padding: 30px;
+}
+
+/* =========================
+   INPUTS
+   ========================= */
+
 input {
   padding: 10px;
   border-radius: 10px;
-  border: none;
+  border: 1px solid rgba(147,197,253,0.25);
   width: 80%;
-  background: rgba(0,0,0,0.3);
+  background: rgba(0,0,0,0.35);
   color: white;
+  outline: none;
 }
 
-/* BUTTON */
+/* =========================
+   BUTTONS (ABILITY STYLE)
+   ========================= */
+
 button {
   background: linear-gradient(135deg, #3b82f6, #60a5fa);
   border: none;
@@ -40,74 +89,84 @@ button {
   border-radius: 12px;
   color: white;
   cursor: pointer;
-  margin-top: 10px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  box-shadow: 0 0 15px rgba(59,130,246,0.25);
 }
 
 button:hover {
-  transform: scale(1.05);
+  transform: translateY(-3px) scale(1.03);
+  box-shadow: 0 0 25px rgba(59,130,246,0.5);
 }
 
-/* PROFILE CARD */
+/* =========================
+   PROFILE CARD
+   ========================= */
+
 .profile-card {
-  background: rgba(17, 25, 40, 0.8);
-  padding: 20px;
-  width: 300px;
+  width: 320px;
   margin: 20px auto;
-  border-radius: 16px;
-  border: 1px solid rgba(96,165,250,0.3);
+  padding: 20px;
 }
 
-/* CLASS CARDS */
+/* =========================
+   CLASS GRID
+   ========================= */
+
 .class-grid {
   display: flex;
   justify-content: center;
-  gap: 20px;
   flex-wrap: wrap;
+  gap: 18px;
+  margin-top: 20px;
 }
 
+/* CLASS CARD */
 .class-card {
-  background: rgba(17, 25, 40, 0.7);
+  width: 160px;
   padding: 20px;
-  width: 150px;
-  border-radius: 14px;
-  border: 1px solid rgba(147, 197, 253, 0.3);
-  transition: 0.3s;
+  cursor: pointer;
 }
 
 .class-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 0 20px rgba(59,130,246,0.5);
+  transform: translateY(-6px);
+  box-shadow: 0 0 25px rgba(59,130,246,0.5);
+  border-color: #60a5fa;
 }
 
-/* XP POPUP */
+/* =========================
+   XP POPUP ANIMATION
+   ========================= */
+
 .xp-popup {
   position: fixed;
   top: 20px;
   right: 20px;
-  background: #3b82f6;
+  background: linear-gradient(135deg, #3b82f6, #60a5fa);
   padding: 10px 15px;
-  border-radius: 10px;
+  border-radius: 12px;
+  color: white;
+  font-weight: 600;
+  box-shadow: 0 0 25px rgba(59,130,246,0.4);
   animation: fade 1.2s ease forwards;
+  z-index: 999;
 }
 
 @keyframes fade {
-  0% {opacity: 0; transform: translateY(-10px);}
-  30% {opacity: 1;}
-  100% {opacity: 0; transform: translateY(-20px);}
+  0% { opacity: 0; transform: translateY(-10px); }
+  20% { opacity: 1; }
+  100% { opacity: 0; transform: translateY(-25px); }
 }
 
-body::before {
-  content: "";
-  position: fixed;
-  width: 100%;
-  height: 100%;
-  background: radial-gradient(circle, rgba(96,165,250,0.15) 2px, transparent 3px);
-  background-size: 80px 80px;
-  animation: drift 20s linear infinite;
-  pointer-events: none;
+/* =========================
+   TEXT STYLING
+   ========================= */
+
+h1 {
+  color: #93c5fd;
+  text-shadow: 0 0 18px rgba(96,165,250,0.3);
 }
 
-@keyframes drift {
-  0% { transform: translateY(0px); }
-  100% { transform: translateY(-200px); }
+p {
+  color: #cbd5e1;
 }
