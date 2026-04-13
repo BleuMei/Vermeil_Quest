@@ -34,15 +34,14 @@ const db = getFirestore(app);
 
 let user = JSON.parse(localStorage.getItem("user"));
 
-if (!user) {
-  window.location.href = "index.html";
-}
+if (!user) window.location.href = "index.html";
 
-user.xp ||= 0;
-user.level ||= 1;
-user.streak ||= 0;
-user.dailyClaimed ||= {};
-user.lastLogin ||= null;
+user.xp ??= 0;
+user.level ??= 1;
+user.streak ??= 0;
+user.lastLogin ??= null;
+user.lastClaimDate ??= null;
+user.dailyClaimed ??= {};
 
 let userRef;
 
@@ -53,10 +52,10 @@ let userRef;
 window.onload = async () => {
   await loadUserFromFirebase();
 
-  updateStreak();
+  renderUI();
   updateLevelUI();
   highlightToday();
-  showDailyPopup();
+  syncStreakUI();
 };
 
 /* =========================
@@ -64,57 +63,41 @@ window.onload = async () => {
 ========================= */
 
 async function loadUserFromFirebase() {
-  try {
-    userRef = doc(db, "students", user.id);
+  userRef = doc(db, "students", user.id);
 
-    const snap = await getDoc(userRef);
+  const snap = await getDoc(userRef);
 
-    if (snap.exists()) {
-      user = { ...user, ...snap.data() };
-    } else {
-      await setDoc(userRef, user);
-    }
+  if (snap.exists()) {
+    user = { ...user, ...snap.data() };
+  } else {
+    await setDoc(userRef, user);
+  }
 
-    saveLocal();
-    loadUserUI();
+  saveLocal();
+}
 
-  } catch (err) {
-    console.log("Firebase failed:", err);
-    loadUserUI();
+/* =========================
+   UI RENDER
+========================= */
+
+function renderUI() {
+  document.getElementById("name").innerText = user.name || "Unknown";
+  document.getElementById("id").innerText = user.id;
+
+  if (user.section) {
+    const p = document.createElement("p");
+    p.innerText = `Section: ${user.section}`;
+    document.querySelector(".profile-card").appendChild(p);
   }
 }
 
 /* =========================
-   UI
-========================= */
-
-function loadUserUI() {
-  document.getElementById("name").innerText = user.name;
-  document.getElementById("id").innerText = user.id;
-  document.getElementById("level").innerText = user.level;
-  document.getElementById("xp").innerText = `${user.xp % 100} / 100`;
-}
-
-/* =========================
-   SAVE SYSTEM
+   SAVE
 ========================= */
 
 async function saveUser() {
   saveLocal();
-
-  if (!userRef) return;
-
-  try {
-    await updateDoc(userRef, {
-      xp: user.xp,
-      level: user.level,
-      streak: user.streak,
-      dailyClaimed: user.dailyClaimed,
-      lastLogin: user.lastLogin
-    });
-  } catch (err) {
-    console.log("Save failed:", err);
-  }
+  if (userRef) await updateDoc(userRef, user);
 }
 
 function saveLocal() {
@@ -122,7 +105,7 @@ function saveLocal() {
 }
 
 /* =========================
-   CLASS NAVIGATION
+   LESSON REDIRECT FIXED
 ========================= */
 
 window.openLesson = function (url) {
@@ -131,44 +114,34 @@ window.openLesson = function (url) {
 };
 
 /* =========================
-   XP SYSTEM (MANA BAR FIXED)
+   XP + MANA BAR
 ========================= */
 
 function addXP(amount = 10) {
   user.xp += amount;
 
   saveUser();
-  showXP(amount);
   updateLevelUI();
+  showXP(amount);
 }
 
-/* =========================
-   LEVEL SYSTEM (MANA BAR)
-========================= */
-
 function updateLevelUI() {
-  let newLevel = Math.floor(user.xp / 100) + 1;
-  let progress = user.xp % 100;
+  const newLevel = Math.floor(user.xp / 100) + 1;
+  const progress = user.xp % 100;
 
   const leveledUp = newLevel > user.level;
   user.level = newLevel;
 
-  const levelEl = document.getElementById("level");
-  const xpEl = document.getElementById("xp");
-  const bar = document.getElementById("xpBar");
+  document.getElementById("level").innerText = newLevel;
+  document.getElementById("xp").innerText = `${progress} / 100`;
 
-  if (levelEl) levelEl.innerText = newLevel;
-  if (xpEl) xpEl.innerText = `${progress} / 100`;
+  const bar = document.getElementById("xpBar");
 
   if (bar) {
     bar.style.width = `${progress}%`;
-    bar.style.transition = "width 0.6s ease";
+    bar.classList.add("mana-pulse");
 
-    // MANA PULSE EFFECT
-    bar.style.boxShadow = "0 0 22px rgba(96,165,250,0.8)";
-    setTimeout(() => {
-      bar.style.boxShadow = "0 0 8px rgba(96,165,250,0.2)";
-    }, 600);
+    setTimeout(() => bar.classList.remove("mana-pulse"), 500);
   }
 
   saveUser();
@@ -177,105 +150,84 @@ function updateLevelUI() {
 }
 
 /* =========================
-   DAILY SYSTEM
+   DAILY QUEST SYSTEM
 ========================= */
 
-function getTodayIndex() {
+function todayIndex() {
   return (new Date().getDate() % 7) + 1;
 }
 
-/* VISUAL FIX: ACTIVE DAY POPS */
+function todayStr() {
+  return new Date().toDateString();
+}
+
+/* VISUAL HIGHLIGHT */
 function highlightToday() {
-  const today = getTodayIndex();
+  const today = todayIndex();
 
   for (let i = 1; i <= 7; i++) {
     const el = document.getElementById("day" + i);
     if (!el) continue;
 
-    el.classList.remove("active", "locked", "glow");
+    el.classList.remove("active", "glow");
 
     if (i === today) {
-      el.classList.add("active", "glow");
-    } else {
-      el.classList.add("locked");
+      el.classList.add("glow");
     }
   }
 }
 
 /* =========================
-   DAILY POPUP (FIXED FEEDBACK)
+   CLAIM DAY (FIXED + FEEDBACK)
 ========================= */
 
-function showDailyPopup() {
-  const popup = document.createElement("div");
-  popup.className = "center-popup";
+window.claimDay = function (day) {
+  const today = todayIndex();
 
-  const today = getTodayIndex();
+  if (day !== today) {
+    return popup("That quest is locked today.");
+  }
 
-  popup.innerHTML = `
-    <h3>Daily Quest Available</h3>
-    <p>Claim today’s quest for rewards</p>
+  if (user.lastClaimDate === todayStr()) {
+    return popup("Already claimed today.");
+  }
 
-    <div class="day-grid">
-      ${Array.from({ length: 7 }, (_, i) => i + 1)
-        .map(day => `
-          <div class="day-box ${day === today ? "active" : "locked"}"
-               onclick="claimDay(${day})">
-            Day ${day}
-          </div>
-        `).join("")}
-    </div>
-  `;
+  // MARK CLAIM
+  user.lastClaimDate = todayStr();
 
-  document.body.appendChild(popup);
-
-  setTimeout(() => popup.remove(), 5000);
-}
-
-/* =========================
-   CLAIM DAY (STREAK FIXED HERE)
-========================= */
-
-function claimDay(day) {
-  const today = getTodayIndex();
-
-  if (day !== today) return showPopup("That quest is locked.");
-  if (user.dailyClaimed[day]) return showPopup("Already claimed today.");
-
-  // reset + mark
   user.dailyClaimed = {};
-  user.dailyClaimed[day] = new Date().toDateString();
+  user.dailyClaimed[day] = true;
 
+  // XP reward
   user.xp += 20;
 
-  // IMPORTANT: streak now actually updates correctly
-  const todayStr = new Date().toDateString();
-  if (user.lastLogin !== todayStr) {
-    user.streak = (user.streak || 0) + 1;
-    user.lastLogin = todayStr;
+  // STREAK LOGIC (Duolingo-style simplified)
+  const yesterday = new Date();
+  yesterday.setDate(yesterday.getDate() - 1);
+
+  if (user.lastLogin === yesterday.toDateString()) {
+    user.streak += 1;
+  } else if (!user.lastLogin || user.lastLogin !== todayStr()) {
+    user.streak = 1;
   }
+
+  user.lastLogin = todayStr();
 
   saveUser();
   updateLevelUI();
-  highlightToday();
+  syncStreakUI();
 
   showXP(20);
-  showPopup("+20 XP earned");
-}
+  popup("Quest cleared +20 XP 🔥 Streak: " + user.streak);
+};
 
 /* =========================
-   STREAK (SAFETY SYNC)
+   STREAK UI
 ========================= */
 
-function updateStreak() {
-  const today = new Date().toDateString();
-
-  if (user.lastLogin !== today) {
-    user.streak = user.lastLogin ? user.streak + 1 : 1;
-    user.lastLogin = today;
-  }
-
-  saveUser();
+function syncStreakUI() {
+  const el = document.getElementById("streak");
+  if (el) el.innerText = user.streak;
 }
 
 /* =========================
@@ -286,18 +238,17 @@ function showXP(amount) {
   const p = document.createElement("div");
   p.className = "xp-popup";
   p.innerText = `+${amount} XP`;
-
   document.body.appendChild(p);
   setTimeout(() => p.remove(), 1200);
 }
 
-function showPopup(message) {
+function popup(text) {
   const p = document.createElement("div");
   p.className = "center-popup";
-  p.innerText = message;
+  p.innerText = text;
 
   document.body.appendChild(p);
-  setTimeout(() => p.remove(), 3500);
+  setTimeout(() => p.remove(), 2500);
 }
 
 /* =========================
@@ -317,7 +268,3 @@ function showLevelUpScreen(level) {
 
   setTimeout(() => screen.classList.add("hidden"), 2000);
 }
-
-/* =========================
-   VISUAL GLOW CLASS (optional CSS hook)
-========================= */
