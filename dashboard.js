@@ -182,6 +182,7 @@ function claimDay(day) {
   user.dailyClaimed[day] = new Date().toDateString();
 
   user.xp += 20;
+  showChest();
 
   saveUser();
   updateLevelUI();
