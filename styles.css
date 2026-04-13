@@ -1,11 +1,11 @@
 /* =========================
    FONTS (FANTASY UNIFIED SYSTEM)
-   ========================= */
+========================= */
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Rajdhani:wght@400;500;600&display=swap');
 
 /* =========================
    BASE
-   ========================= */
+========================= */
 
 body {
   margin: 0;
@@ -19,7 +19,7 @@ body {
   overflow-x: hidden;
 }
 
-/* magic particles */
+/* particles */
 body::before {
   content: "";
   position: fixed;
@@ -36,15 +36,14 @@ body::before {
   to { transform: translateY(-250px); }
 }
 
-/* keep UI above bg */
 body > * {
   position: relative;
   z-index: 1;
 }
 
 /* =========================
-   TYPOGRAPHY (FANTASY HIERARCHY)
-   ========================= */
+   TYPOGRAPHY
+========================= */
 
 h1 {
   font-family: "Cinzel", serif;
@@ -64,26 +63,22 @@ p {
 }
 
 /* =========================
-   GLASS CARDS
-   ========================= */
+   GLASS UI
+========================= */
 
-.card,
 .profile-card,
 .center-card,
-.class-card,
-.streak-card {
+.class-card {
   background: rgba(255, 255, 255, 0.06);
   border: 1px solid rgba(147, 197, 253, 0.25);
   backdrop-filter: blur(14px);
   border-radius: 18px;
   box-shadow: 0 10px 30px rgba(0,0,0,0.45);
-  transition: all 0.25s ease;
-  color: #e5e7eb;
 }
 
 /* =========================
-   LOGIN CARD
-   ========================= */
+   LOGIN
+========================= */
 
 .center-card {
   width: 90%;
@@ -94,19 +89,17 @@ p {
 
 /* =========================
    INPUTS
-   ========================= */
+========================= */
 
 input {
   font-family: "Rajdhani", sans-serif;
   font-size: 16px;
-
   padding: 12px;
   border-radius: 10px;
   border: 1px solid rgba(147,197,253,0.25);
   width: 90%;
   background: rgba(0,0,0,0.35);
   color: white;
-  outline: none;
   margin-top: 10px;
 }
 
@@ -117,7 +110,7 @@ input:focus {
 
 /* =========================
    BUTTONS
-   ========================= */
+========================= */
 
 button {
   font-family: "Cinzel", serif;
@@ -128,9 +121,7 @@ button {
   color: white;
   cursor: pointer;
   font-weight: 600;
-  transition: all 0.2s ease;
-  box-shadow: 0 0 15px rgba(59,130,246,0.25);
-  margin-top: 10px;
+  transition: 0.2s ease;
 }
 
 button:hover {
@@ -139,50 +130,33 @@ button:hover {
 }
 
 /* =========================
-   PROFILE (compact)
-   ========================= */
-
-.profile-card {
-  width: fit-content;
-  max-width: 360px;
-  margin: 20px auto;
-  padding: 20px;
-}
-
-/* =========================
-   CLASS GRID (FIXED CLICK + SIZE)
-   ========================= */
+   CLASS GRID
+========================= */
 
 .class-grid {
   display: flex;
-  flex-wrap: wrap;
   justify-content: center;
   gap: 12px;
   padding: 15px;
+  flex-wrap: wrap;
 }
 
-/* CLASS CARD */
 .class-card {
-  display: inline-block;
-  width: auto;
   min-width: 140px;
-  max-width: 180px;
   padding: 16px;
   cursor: pointer;
   text-align: center;
   font-family: "Cinzel", serif;
-  pointer-events: auto;
 }
 
 .class-card:hover {
   transform: translateY(-6px);
   box-shadow: 0 0 25px rgba(59,130,246,0.5);
-  border-color: #60a5fa;
 }
 
 /* =========================
    XP POPUP
-   ========================= */
+========================= */
 
 .xp-popup {
   position: fixed;
@@ -192,27 +166,24 @@ button:hover {
   padding: 10px 15px;
   border-radius: 12px;
   font-weight: 600;
-  box-shadow: 0 0 25px rgba(59,130,246,0.4);
-  animation: fade 1.2s ease forwards;
+  animation: fade 1.2s forwards;
   z-index: 9999;
 }
 
 @keyframes fade {
   0% { opacity: 0; transform: translateY(-10px); }
-  20% { opacity: 1; }
   100% { opacity: 0; transform: translateY(-25px); }
 }
 
 /* =========================
-   CENTER POPUP (FIXED CENTER)
-   ========================= */
+   CENTER POPUP
+========================= */
 
 .center-popup {
   position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-
   width: 90%;
   max-width: 420px;
 
@@ -221,34 +192,22 @@ button:hover {
   padding: 20px;
   border-radius: 16px;
 
-  font-size: 16px;
-  color: white;
-
   z-index: 999999;
-
   text-align: center;
-
-  display: flex;
-  flex-direction: column;
-  align-items: center;
 }
 
 /* =========================
-   DAILY GRID (FIXED + CLEAN)
-   ========================= */
+   DAILY GRID
+========================= */
 
 .day-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 10px;
-  margin-top: 15px;
-  padding: 0 10px;
 }
 
-/* DAY BOX */
 .day-box {
   font-family: "Cinzel", serif;
-
   padding: 14px;
   border-radius: 14px;
 
@@ -256,203 +215,58 @@ button:hover {
   border: 1px solid rgba(147,197,253,0.2);
 
   cursor: pointer;
+  transition: 0.2s ease;
 
-  font-size: 14px;
-
-  min-height: 50px;
   display: flex;
-  align-items: center;
   justify-content: center;
-
-  transition: all 0.25s ease;
-  white-space: nowrap;
+  align-items: center;
 }
 
+/* hover */
 .day-box:hover {
-  transform: translateY(-4px) scale(1.05);
+  transform: scale(1.05);
   border-color: #60a5fa;
 }
 
-.day-box.active {
-  border: 1px solid #60a5fa;
-  box-shadow: 0 0 18px rgba(96,165,250,0.5);
+/* ACTIVE DAY (IMPORTANT FIX) */
+.day-box.active,
+.day-box.glow {
+  border: 2px solid #60a5fa;
+  box-shadow: 0 0 28px rgba(96,165,250,0.9);
+  transform: scale(1.12);
 }
 
+/* TODAY PULSE */
+.day-box.today-glow {
+  animation: pulseGlow 1.2s infinite alternate;
+}
+
+@keyframes pulseGlow {
+  from { box-shadow: 0 0 10px rgba(96,165,250,0.4); }
+  to { box-shadow: 0 0 30px rgba(96,165,250,1); }
+}
+
+/* LOCKED */
 .day-box.locked {
-  opacity: 0.35;
-  filter: grayscale(60%);
+  opacity: 0.25;
+  filter: grayscale(90%);
   pointer-events: none;
 }
 
-/* click feedback */
+/* CLICK FEEDBACK */
 .day-box.clicked {
-  animation: flash 0.4s ease;
+  animation: clickBurst 0.35s ease;
 }
 
-@keyframes flash {
+@keyframes clickBurst {
   0% { transform: scale(1); }
-  50% { transform: scale(1.15); background: rgba(96,165,250,0.25); }
+  50% { transform: scale(1.2); }
   100% { transform: scale(1); }
 }
 
 /* =========================
-   MOBILE FIX
-   ========================= */
-
-@media (max-width: 600px) {
-  h1 { font-size: 24px; }
-  h2 { font-size: 18px; }
-
-  .day-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  button { width: 100%; }
-}
-
-/* =========================
-   BURGER MENU SYSTEM
-   ========================= */
-
-.burger {
-  position: fixed;
-  top: 15px;
-  left: 15px;
-  font-size: 28px;
-  cursor: pointer;
-  z-index: 10000;
-  color: #93c5fd;
-  font-family: "Cinzel", serif;
-}
-
-.side-menu {
-  position: fixed;
-  top: 0;
-  left: -260px;
-  width: 220px;
-  height: 100%;
-  background: rgba(10, 15, 30, 0.95);
-  border-right: 1px solid rgba(147,197,253,0.3);
-  backdrop-filter: blur(12px);
-  padding: 20px;
-  transition: 0.3s ease;
-  z-index: 9999;
-}
-
-.side-menu.open {
-  left: 0;
-}
-
-.side-menu h3 {
-  font-family: "Cinzel", serif;
-  color: #93c5fd;
-  margin-bottom: 15px;
-}
-
-.side-menu button {
-  width: 100%;
-  margin-bottom: 10px;
-  font-family: "Cinzel", serif;
-}
-
-/* =========================
-   REWARD CHEST SYSTEM
-   ========================= */
-
-.chest {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 60px;
-  cursor: pointer;
-  z-index: 99999;
-  animation: chestAppear 0.4s ease;
-  filter: drop-shadow(0 0 15px rgba(96,165,250,0.6));
-}
-
-.hidden {
-  display: none;
-}
-
-@keyframes chestAppear {
-  from { transform: translate(-50%, -50%) scale(0.2); opacity: 0; }
-  to { transform: translate(-50%, -50%) scale(1); opacity: 1; }
-}
-
-/* chest shake before opening */
-.shake {
-  animation: shake 0.4s infinite;
-}
-
-@keyframes shake {
-  0% { transform: translate(-50%, -50%) rotate(0deg); }
-  25% { transform: translate(-52%, -50%) rotate(-5deg); }
-  50% { transform: translate(-48%, -50%) rotate(5deg); }
-  75% { transform: translate(-52%, -50%) rotate(-3deg); }
-  100% { transform: translate(-50%, -50%) rotate(0deg); }
-}
-
-/* optional glow variants */
-.rare {
-  border: 1px solid #60a5fa;
-  box-shadow: 0 0 25px rgba(96,165,250,0.5);
-}
-
-.legendary {
-  border: 1px solid #fbbf24;
-  box-shadow: 0 0 30px rgba(251,191,36,0.6);
-}
-
-/* =========================
-   LEVEL UP SCREEN
-   ========================= */
-
-.level-up {
-  position: fixed;
-  inset: 0;
-  background: radial-gradient(circle at center, rgba(96,165,250,0.25), rgba(0,0,0,0.9));
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 999999;
-  text-align: center;
-  color: white;
-  font-family: "Cinzel", serif;
-  animation: fadeIn 0.4s ease;
-}
-
-.level-up h1 {
-  font-size: 42px;
-  color: #93c5fd;
-  text-shadow: 0 0 25px rgba(96,165,250,0.6);
-  animation: pop 0.6s ease;
-}
-
-.level-up p {
-  margin-top: 10px;
-  font-size: 18px;
-  opacity: 0.9;
-}
-
-.hidden {
-  display: none;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-@keyframes pop {
-  0% { transform: scale(0.6); opacity: 0; }
-  60% { transform: scale(1.2); opacity: 1; }
-  100% { transform: scale(1); }
-}
-
-/* =========================
-   XP MANA SYSTEM (YOU FORGOT THIS)
-   ========================= */
+   XP MANA BAR (FIXED + CLEAN)
+========================= */
 
 .xp-container {
   width: 100%;
@@ -461,70 +275,46 @@ button:hover {
   border-radius: 10px;
   overflow: hidden;
   margin-top: 10px;
-  border: 1px solid rgba(147,197,253,0.2);
 }
 
-/* THE ACTUAL MANA BAR */
 .xp-bar {
   height: 100%;
   width: 0%;
-
-  background: linear-gradient(
-    270deg,
-    #3b82f6,
-    #60a5fa,
-    #93c5fd,
-    #60a5fa,
-    #3b82f6
-  );
-
-  background-size: 400% 400%;
-  animation: manaFlow 6s linear infinite;
-
+  background: linear-gradient(90deg, #3b82f6, #60a5fa, #93c5fd);
   transition: width 0.6s ease;
-
   box-shadow: 0 0 12px rgba(96,165,250,0.5);
 }
 
-/* FLOWING MAGIC EFFECT */
-@keyframes manaFlow {
-  0% { background-position: 0% 50%; }
-  100% { background-position: 100% 50%; }
-}
-
-/* EXTRA GLOW ON LEVEL UP (pairs with JS) */
-.xp-bar.level-up-glow {
-  animation: manaBurst 0.6s ease;
-}
-
-@keyframes manaBurst {
-  0% { box-shadow: 0 0 10px rgba(96,165,250,0.4); }
-  50% { box-shadow: 0 0 30px rgba(96,165,250,0.9); }
-  100% { box-shadow: 0 0 10px rgba(96,165,250,0.4); }
-}
-
-.day-box.today-glow {
-  border: 1px solid #60a5fa;
-  box-shadow: 0 0 25px rgba(96,165,250,0.9);
-  transform: scale(1.05);
-  animation: pulseGlow 1.2s infinite alternate;
-}
-
-@keyframes pulseGlow {
-  from {
-    box-shadow: 0 0 12px rgba(96,165,250,0.4);
-  }
-  to {
-    box-shadow: 0 0 30px rgba(96,165,250,1);
-  }
-}
-
+/* mana pulse */
 .mana-pulse {
-  box-shadow: 0 0 25px rgba(96,165,250,0.8);
+  box-shadow: 0 0 25px rgba(96,165,250,0.8) !important;
 }
 
-.day-box.glow {
-  border: 2px solid #60a5fa;
-  box-shadow: 0 0 18px rgba(96,165,250,0.8);
-  transform: scale(1.08);
+/* =========================
+   LEVEL UP SCREEN
+========================= */
+
+.level-up {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999999;
+}
+
+.level-up h1 {
+  font-size: 42px;
+  color: #93c5fd;
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 600px) {
+  .day-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
