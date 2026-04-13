@@ -1,9 +1,11 @@
 body {
   margin: 0;
   font-family: "Poppins", sans-serif;
-  background: linear-gradient(135deg, #0b1020, #0f1b3d, #0a2540);
-  color: #e5e7eb;
   text-align: center;
+  color: #e5e7eb;
+
+  background: linear-gradient(135deg, #0b1020, #0f1b3d, #0a2540);
+  min-height: 100vh;
 }
 
 /* LOGIN CARD */
@@ -90,8 +92,4 @@ button:hover {
   0% {opacity: 0; transform: translateY(-10px);}
   30% {opacity: 1;}
   100% {opacity: 0; transform: translateY(-20px);}
-}
-
-body {
-  background: red !important;
 }
