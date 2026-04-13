@@ -233,3 +233,35 @@ p {
   background: linear-gradient(90deg, #3b82f6, #60a5fa);
   transition: width 0.4s ease;
 }
+
+.streak-card {
+  width: 90%;
+  max-width: 320px;
+  margin: 20px auto;
+  padding: 20px;
+  border-radius: 16px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.streak-card:hover {
+  transform: scale(1.03);
+  box-shadow: 0 0 25px rgba(59,130,246,0.4);
+}
+
+/* CENTER POPUP */
+.center-popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(17, 25, 40, 0.95);
+  border: 1px solid rgba(96,165,250,0.5);
+  padding: 25px;
+  border-radius: 16px;
+  font-size: 18px;
+  color: white;
+  z-index: 9999;
+  box-shadow: 0 0 40px rgba(59,130,246,0.4);
+  text-align: center;
+}
