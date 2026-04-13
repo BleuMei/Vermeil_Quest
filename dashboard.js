@@ -72,5 +72,26 @@ function updateLevel() {
   localStorage.setItem("user", JSON.stringify(user));
 }
 
+function claimDay(day) {
+  let user = JSON.parse(localStorage.getItem("user"));
+  let today = new Date().toDateString();
+
+  if (user.dailyClaimed[day] === today) {
+    alert("Already claimed today.");
+    return;
+  }
+
+  user.dailyClaimed[day] = today;
+
+  user.xp += 20;
+
+  showXP(20);
+
+  localStorage.setItem("user", JSON.stringify(user));
+
+  updateLevel();
+  updateDays();
+}
+
 updateStreak();
 loadUser();
