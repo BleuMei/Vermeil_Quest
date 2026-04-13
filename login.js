@@ -14,6 +14,17 @@ function login() {
     return;
   }
 
+  let user = {
+  id: studentId,
+  xp: 0,
+  level: 1,
+  streak: 0,
+  lastLogin: null,
+  dailyClaimed: {} // stores Day1-Day7 status
+};
+
+localStorage.setItem("user", JSON.stringify(user));
+
   localStorage.setItem("user", JSON.stringify(user));
   window.location.href = "dashboard.html";
 }
