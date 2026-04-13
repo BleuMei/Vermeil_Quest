@@ -1,35 +1,14 @@
 /* =========================
-   FIREBASE INIT
-   ========================= */
+   FIREBASE IMPORT
+========================= */
 
-// Firebase v9 modular import style (CDN / Vite compatible)
-import { doc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import {
-  getFirestore,
-  doc,
-  getDoc,
-  setDoc,
-  updateDoc
-} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-
-// Your config
-const firebaseConfig = {
-  apiKey: "AIzaSyBMc36-Vg_Ger814ZWz_JHs7KG-csgGggA",
-  authDomain: "vermeil-quest.firebaseapp.com",
-  projectId: "vermeil-quest",
-  storageBucket: "vermeil-quest.firebasestorage.app",
-  messagingSenderId: "943194791633",
-  appId: "1:943194791633:web:a3ddd0f3914f518171aff0",
-  measurementId: "G-02CJBN8HS9"
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+import { db } from "./firebase.js";
+import { doc, getDoc, setDoc, updateDoc } 
+from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 /* =========================
    USER STATE
-   ========================= */
+========================= */
 
 let user = JSON.parse(localStorage.getItem("user"));
 
@@ -37,7 +16,6 @@ if (!user) {
   window.location.href = "index.html";
 }
 
-/* fallback defaults */
 user.xp ||= 0;
 user.level ||= 1;
 user.streak ||= 0;
@@ -48,7 +26,7 @@ let userRef;
 
 /* =========================
    INIT
-   ========================= */
+========================= */
 
 window.onload = async () => {
   await loadUserFromFirebase();
@@ -61,17 +39,16 @@ window.onload = async () => {
 
 /* =========================
    FIREBASE LOAD
-   ========================= */
+========================= */
 
 async function loadUserFromFirebase() {
   try {
-    userRef = doc(db, "users", user.id);
+    userRef = doc(db, "students", user.id);
 
     const snap = await getDoc(userRef);
 
     if (snap.exists()) {
-      const data = snap.data();
-      user = { ...user, ...data };
+      user = { ...user, ...snap.data() };
     } else {
       await setDoc(userRef, user);
     }
@@ -80,14 +57,14 @@ async function loadUserFromFirebase() {
     loadUserUI();
 
   } catch (err) {
-    console.log("Firebase error, using local data", err);
+    console.log("Firebase failed, using local", err);
     loadUserUI();
   }
 }
 
 /* =========================
    UI LOAD
-   ========================= */
+========================= */
 
 function loadUserUI() {
   document.getElementById("name").innerText = user.name;
@@ -95,8 +72,8 @@ function loadUserUI() {
 }
 
 /* =========================
-   SAVE SYSTEM (FIREBASE + LOCAL)
-   ========================= */
+   SAVE SYSTEM
+========================= */
 
 async function saveUser() {
   saveLocal();
@@ -104,7 +81,12 @@ async function saveUser() {
   if (!userRef) return;
 
   try {
-    await updateDoc(userRef, user);
+    await updateDoc(userRef, {
+      xp: user.xp,
+      level: user.level,
+      streak: user.streak,
+      dailyClaimed: user.dailyClaimed
+    });
   } catch (err) {
     console.log("Save failed:", err);
   }
@@ -116,7 +98,7 @@ function saveLocal() {
 
 /* =========================
    CLASS NAVIGATION
-   ========================= */
+========================= */
 
 function openLesson(url) {
   if (!url) return;
@@ -125,7 +107,7 @@ function openLesson(url) {
 
 /* =========================
    XP SYSTEM
-   ========================= */
+========================= */
 
 function addXP(amount = 10) {
   user.xp += amount;
@@ -136,14 +118,14 @@ function addXP(amount = 10) {
 }
 
 /* =========================
-   LEVEL SYSTEM (MANA STYLE BAR)
-   ========================= */
+   LEVEL SYSTEM
+========================= */
 
 function updateLevelUI() {
   let level = Math.floor(user.xp / 100) + 1;
   let progress = user.xp % 100;
 
-  const leveledUp = user.level && level > user.level;
+  const leveledUp = level > user.level;
   user.level = level;
 
   const levelEl = document.getElementById("level");
@@ -157,7 +139,6 @@ function updateLevelUI() {
     bar.style.width = `${progress}%`;
     bar.style.transition = "width 0.6s ease";
 
-    // mana pulse
     bar.style.boxShadow = "0 0 20px rgba(96,165,250,0.7)";
     setTimeout(() => {
       bar.style.boxShadow = "0 0 6px rgba(96,165,250,0.2)";
@@ -166,14 +147,12 @@ function updateLevelUI() {
 
   saveUser();
 
-  if (leveledUp) {
-    showLevelUpScreen(level);
-  }
+  if (leveledUp) showLevelUpScreen(level);
 }
 
 /* =========================
    DAILY SYSTEM
-   ========================= */
+========================= */
 
 function getTodayIndex() {
   return (new Date().getDate() % 7) + 1;
@@ -195,14 +174,9 @@ function highlightToday() {
 
 /* =========================
    DAILY POPUP
-   ========================= */
-
-let popupOpen = false;
+========================= */
 
 function showDailyPopup() {
-  if (popupOpen) return;
-  popupOpen = true;
-
   const popup = document.createElement("div");
   popup.className = "center-popup";
 
@@ -225,21 +199,17 @@ function showDailyPopup() {
 
   document.body.appendChild(popup);
 
-  setTimeout(() => {
-    popup.remove();
-    popupOpen = false;
-  }, 5000);
+  setTimeout(() => popup.remove(), 5000);
 }
 
 /* =========================
    CLAIM DAY
-   ========================= */
+========================= */
 
 function claimDay(day) {
   const today = getTodayIndex();
 
   if (day !== today) return showPopup("Locked quest.");
-
   if (user.dailyClaimed[day]) return showPopup("Already claimed.");
 
   user.dailyClaimed = {};
@@ -251,12 +221,12 @@ function claimDay(day) {
   updateLevelUI();
   highlightToday();
 
-  showPopup(`+20 XP earned`);
+  showPopup("+20 XP earned");
 }
 
 /* =========================
    STREAK
-   ========================= */
+========================= */
 
 function updateStreak() {
   const today = new Date().toDateString();
@@ -271,7 +241,7 @@ function updateStreak() {
 
 /* =========================
    POPUPS
-   ========================= */
+========================= */
 
 function showXP(amount) {
   const p = document.createElement("div");
@@ -281,27 +251,18 @@ function showXP(amount) {
   setTimeout(() => p.remove(), 1200);
 }
 
-let messageLock = false;
-
 function showPopup(message) {
-  if (messageLock) return;
-  messageLock = true;
-
   const p = document.createElement("div");
   p.className = "center-popup";
   p.innerText = message;
 
   document.body.appendChild(p);
-
-  setTimeout(() => {
-    p.remove();
-    messageLock = false;
-  }, 4000);
+  setTimeout(() => p.remove(), 4000);
 }
 
 /* =========================
    LEVEL UP SCREEN
-   ========================= */
+========================= */
 
 function showLevelUpScreen(level) {
   const screen = document.getElementById("levelUpScreen");
@@ -315,62 +276,4 @@ function showLevelUpScreen(level) {
   `;
 
   setTimeout(() => screen.classList.add("hidden"), 2000);
-}
-
-async function addStudent(db, studentId, name, section) {
-  await setDoc(doc(db, "users", studentId), {
-    id: studentId,
-    name: name,
-    section: section,
-    xp: 0,
-    level: 1,
-    streak: 0,
-    dailyClaimed: {}
-  });
-}
-
-import { db } from "./firebase.js";
-import { doc, getDoc } from "firebase/firestore";
-
-async function login() {
-  const id = document.getElementById("studentId").value;
-
-  if (!id) return alert("Enter ID");
-
-  const ref = doc(db, "students", id);
-  const snap = await getDoc(ref);
-
-  if (!snap.exists()) {
-    alert("Student not found");
-    return;
-  }
-
-  const userData = snap.data();
-
-  // save locally (so dashboard works)
-  localStorage.setItem("user", JSON.stringify({
-    id: id,
-    name: userData.name,
-    section: userData.section,
-    xp: userData.xp,
-    level: userData.level,
-    streak: userData.streak
-  }));
-
-  window.location.href = "dashboard.html";
-}
-
-import { db } from "./firebase.js";
-import { doc, updateDoc } from "firebase/firestore";
-
-async function saveUser() {
-  localStorage.setItem("user", JSON.stringify(user));
-
-  const ref = doc(db, "students", user.id);
-
-  await updateDoc(ref, {
-    xp: user.xp,
-    level: user.level,
-    streak: user.streak
-  });
 }
