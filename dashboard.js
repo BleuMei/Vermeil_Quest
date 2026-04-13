@@ -141,5 +141,33 @@ function claimStreak() {
   showPopup(`🔥 Day ${user.streak} streak claimed! +20 XP awarded.`);
 }
 
+let popupActive = false;
+
+function showPopup(message) {
+  if (popupActive) return;
+
+  popupActive = true;
+
+  const popup = document.createElement("div");
+  popup.className = "center-popup";
+  popup.innerText = message;
+
+  document.body.appendChild(popup);
+
+  // disappears after 5 seconds IF not interacted
+  let timeout = setTimeout(() => {
+    popup.remove();
+    popupActive = false;
+  }, 5000);
+
+  // disappears if user clicks anywhere
+  document.addEventListener("click", function handler() {
+    popup.remove();
+    popupActive = false;
+    clearTimeout(timeout);
+    document.removeEventListener("click", handler);
+  });
+}
+
 updateStreak();
 loadUser();
