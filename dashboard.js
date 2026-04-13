@@ -277,3 +277,6 @@ function showLevelUpScreen(level) {
 
   setTimeout(() => screen.classList.add("hidden"), 2000);
 }
+
+bar.classList.add("level-up-glow");
+setTimeout(() => bar.classList.remove("level-up-glow"), 600);
