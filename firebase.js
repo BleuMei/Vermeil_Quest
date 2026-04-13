@@ -1,19 +1,16 @@
-// Firebase core
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-analytics.js";
-
-// Auth + Firestore (IMPORTANT — missing in your version)
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import {
-  getAuth
-} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
-
-import {
-  getFirestore
-} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+  getFirestore,
+  doc,
+  getDoc,
+  setDoc,
+  updateDoc,
+  enableIndexedDbPersistence
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 /* =========================
-   CONFIG
-   ========================= */
+   FIREBASE CONFIG
+========================= */
 
 const firebaseConfig = {
   apiKey: "AIzaSyBMc36-Vg_Ger814ZWz_JHs7KG-csgGggA",
@@ -26,15 +23,54 @@ const firebaseConfig = {
 };
 
 /* =========================
-   INIT APP
-   ========================= */
+   INIT APP (ONLY ONCE)
+========================= */
 
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
+const db = getFirestore(app);
+
+/* OPTIONAL: offline support (won’t crash app if it fails) */
+enableIndexedDbPersistence(db).catch(() => {
+  console.log("Offline persistence not enabled (ignored)");
+});
 
 /* =========================
-   EXPORTS (THIS IS WHAT YOUR DASHBOARD NEEDS)
-   ========================= */
+   SAFE WRAPPERS
+========================= */
 
-export const auth = getAuth(app);
-export const db = getFirestore(app);
+export async function getUserDoc(collection, id) {
+  try {
+    const ref = doc(db, collection, id);
+    const snap = await getDoc(ref);
+    return snap.exists() ? snap.data() : null;
+  } catch (err) {
+    console.error("getUserDoc failed:", err);
+    return null;
+  }
+}
+
+export async function createUserDoc(collection, id, data) {
+  try {
+    const ref = doc(db, collection, id);
+    await setDoc(ref, data);
+  } catch (err) {
+    console.error("createUserDoc failed:", err);
+  }
+}
+
+export async function updateUserDoc(collection, id, data) {
+  try {
+    const ref = doc(db, collection, id);
+    await updateDoc(ref, data);
+  } catch (err) {
+    console.error("updateUserDoc failed:", err);
+  }
+}
+
+/* =========================
+   SAFE DOC REFERENCE EXPORT
+========================= */
+
+export function getDocRef(collection, id) {
+  return doc(db, collection, id);
+}
