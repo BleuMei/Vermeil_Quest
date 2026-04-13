@@ -7,6 +7,7 @@
 
   <link rel="stylesheet" href="styles.css">
 
+  <!-- Google Font -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
@@ -18,14 +19,33 @@
     <h1>Vermeil Quest</h1>
     <p class="subtitle">Gamified Learning System</p>
 
-    <input id="studentId" placeholder="Student ID">
-    <br><br>
-    <input id="password" type="password" placeholder="Password">
-    <br><br>
+    <!-- FORM (this fixes Enter key automatically) -->
+    <form onsubmit="login(); return false;">
+      
+      <input 
+        id="studentId" 
+        type="text" 
+        placeholder="Student ID" 
+        required
+      >
 
-    <button onclick="login()">Enter Quest</button>
+      <br><br>
+
+      <input 
+        id="password" 
+        type="password" 
+        placeholder="Password" 
+        required
+      >
+
+      <br><br>
+
+      <button type="submit">Enter Quest</button>
+
+    </form>
   </div>
 
   <script src="login.js"></script>
+
 </body>
 </html>
