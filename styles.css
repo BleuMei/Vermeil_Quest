@@ -8,13 +8,17 @@ body {
   text-align: center;
   color: #e5e7eb;
   min-height: 100vh;
+  font-size: 16px;
 
   /* fantasy-tech gradient */
   background: radial-gradient(circle at top, #1b2a4a, #0b1020 45%, #050814);
   overflow-x: hidden;
 }
 
-/* floating magic particles */
+/* =========================
+   MAGIC PARTICLES BACKGROUND
+   ========================= */
+
 body::before {
   content: "";
   position: fixed;
@@ -32,13 +36,13 @@ body::before {
 }
 
 /* ensure content above particles */
-h1, h2, p, div, input, button {
+* {
   position: relative;
   z-index: 1;
 }
 
 /* =========================
-   GLASS CARD BASE (ONE STYLE ONLY)
+   GLASS CARD SYSTEM
    ========================= */
 
 .card,
@@ -51,7 +55,6 @@ h1, h2, p, div, input, button {
   border-radius: 18px;
   box-shadow: 0 10px 30px rgba(0,0,0,0.45);
   transition: all 0.25s ease;
-  color: #e5e7eb;
 }
 
 /* =========================
@@ -59,44 +62,10 @@ h1, h2, p, div, input, button {
    ========================= */
 
 .center-card {
-  width: 320px;
-  margin: 120px auto;
-  padding: 30px;
-}
-
-/* =========================
-   INPUTS
-   ========================= */
-
-input {
-  padding: 10px;
-  border-radius: 10px;
-  border: 1px solid rgba(147,197,253,0.25);
-  width: 80%;
-  background: rgba(0,0,0,0.35);
-  color: white;
-  outline: none;
-}
-
-/* =========================
-   BUTTONS (ABILITY STYLE)
-   ========================= */
-
-button {
-  background: linear-gradient(135deg, #3b82f6, #60a5fa);
-  border: none;
-  padding: 10px 16px;
-  border-radius: 12px;
-  color: white;
-  cursor: pointer;
-  font-weight: 500;
-  transition: all 0.2s ease;
-  box-shadow: 0 0 15px rgba(59,130,246,0.25);
-}
-
-button:hover {
-  transform: translateY(-3px) scale(1.03);
-  box-shadow: 0 0 25px rgba(59,130,246,0.5);
+  width: 90%;
+  max-width: 340px;
+  margin: 100px auto;
+  padding: 25px;
 }
 
 /* =========================
@@ -104,9 +73,47 @@ button:hover {
    ========================= */
 
 .profile-card {
-  width: 320px;
+  width: 90%;
+  max-width: 350px;
   margin: 20px auto;
   padding: 20px;
+}
+
+/* =========================
+   INPUTS
+   ========================= */
+
+input {
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(147,197,253,0.25);
+  width: 90%;
+  background: rgba(0,0,0,0.35);
+  color: white;
+  outline: none;
+  margin-top: 10px;
+}
+
+/* =========================
+   BUTTONS
+   ========================= */
+
+button {
+  background: linear-gradient(135deg, #3b82f6, #60a5fa);
+  border: none;
+  padding: 12px;
+  border-radius: 12px;
+  color: white;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  box-shadow: 0 0 15px rgba(59,130,246,0.25);
+  margin-top: 10px;
+}
+
+button:hover {
+  transform: translateY(-3px) scale(1.03);
+  box-shadow: 0 0 25px rgba(59,130,246,0.5);
 }
 
 /* =========================
@@ -117,7 +124,7 @@ button:hover {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
   gap: 15px;
-  padding: 0 15px;
+  padding: 15px;
 }
 
 /* CLASS CARD */
@@ -133,7 +140,17 @@ button:hover {
 }
 
 /* =========================
-   XP POPUP ANIMATION
+   QUIZ CHOICES
+   ========================= */
+
+#choices button {
+  display: block;
+  width: 90%;
+  margin: 10px auto;
+}
+
+/* =========================
+   XP POPUP
    ========================= */
 
 .xp-popup {
@@ -143,7 +160,6 @@ button:hover {
   background: linear-gradient(135deg, #3b82f6, #60a5fa);
   padding: 10px 15px;
   border-radius: 12px;
-  color: white;
   font-weight: 600;
   box-shadow: 0 0 25px rgba(59,130,246,0.4);
   animation: fade 1.2s ease forwards;
@@ -161,17 +177,38 @@ button:hover {
    ========================= */
 
 h1 {
+  font-size: 26px;
   color: #93c5fd;
   text-shadow: 0 0 18px rgba(96,165,250,0.3);
+}
+
+h2 {
+  font-size: 20px;
 }
 
 p {
   color: #cbd5e1;
 }
 
+/* =========================
+   MOBILE IMPROVEMENTS
+   ========================= */
 
-#choices button {
-  display: block;
-  margin: 10px auto;
-  width: 80%;
+@media (max-width: 600px) {
+  h1 {
+    font-size: 22px;
+  }
+
+  h2 {
+    font-size: 18px;
+  }
+
+  button {
+    width: 100%;
+  }
+
+  .center-card,
+  .profile-card {
+    width: 90%;
+  }
 }
