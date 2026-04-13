@@ -1,6 +1,11 @@
 function login() {
-  const id = document.getElementById("studentId").value;
-  const pass = document.getElementById("password").value;
+  const id = document.getElementById("studentId").value.trim();
+  const pass = document.getElementById("password").value.trim();
+
+  if (!id || !pass) {
+    alert("Please enter your Student ID and password");
+    return;
+  }
 
   // fake database
   const users = [
@@ -14,15 +19,28 @@ function login() {
     return;
   }
 
-  let user = {
-    id: foundUser.id,
-    name: foundUser.name,
-    xp: 0,
-    level: 1,
-    streak: 0,
-    lastLogin: null,
-    dailyClaimed: {}
-  };
+  // CHECK IF USER ALREADY EXISTS (IMPORTANT FIX)
+  let existingUser = JSON.parse(localStorage.getItem("user"));
+
+  let user = existingUser && existingUser.id === foundUser.id
+    ? existingUser
+    : {
+        id: foundUser.id,
+        name: foundUser.name,
+        xp: 0,
+        level: 1,
+        streak: 0,
+        lastLogin: null,
+        dailyClaimed: {}
+      };
+
+  // UPDATE LOGIN STREAK LOGIC
+  const today = new Date().toDateString();
+
+  if (user.lastLogin !== today) {
+    user.streak += 1;
+    user.lastLogin = today;
+  }
 
   localStorage.setItem("user", JSON.stringify(user));
 
