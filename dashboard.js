@@ -4,10 +4,7 @@ if (!user) {
   window.location.href = "index.html";
 }
 
-/* =========================
-   SAFE DEFAULTS (IMPORTANT FIX)
-   ========================= */
-
+/* SAFE DEFAULTS */
 user.xp = user.xp || 0;
 user.level = user.level || 1;
 user.streak = user.streak || 0;
@@ -36,11 +33,24 @@ function loadUser() {
 }
 
 /* =========================
+   CLASS NAVIGATION (FIXED SAFE)
+   ========================= */
+
+function openLesson(url) {
+  if (!url) return;
+
+  localStorage.setItem("lessonLink", url);
+
+  // force navigation (extra safety)
+  window.location.href = url;
+}
+
+/* =========================
    XP SYSTEM
    ========================= */
 
 function addXP(amount = 10) {
-  user.xp = (user.xp || 0) + amount;
+  user.xp += amount;
 
   saveUser();
   showXP(amount);
@@ -76,7 +86,6 @@ function getTodayIndex() {
   return (new Date().getDate() % 7) + 1;
 }
 
-/* highlight UI */
 function highlightToday() {
   const today = getTodayIndex();
 
@@ -99,13 +108,18 @@ function highlightToday() {
    ========================= */
 
 let popupOpen = false;
+let popupElement = null;
 
 function showDailyPopup() {
   if (popupOpen) return;
   popupOpen = true;
 
+  // remove old popup if stuck
+  if (popupElement) popupElement.remove();
+
   const popup = document.createElement("div");
   popup.className = "center-popup";
+  popupElement = popup;
 
   const today = getTodayIndex();
 
@@ -127,22 +141,24 @@ function showDailyPopup() {
   document.body.appendChild(popup);
 
   const timeout = setTimeout(() => {
-    popup.remove();
-    popupOpen = false;
+    closePopup();
   }, 5000);
 
-  popup.addEventListener("click", (e) => {
-    e.stopPropagation();
-  });
+  function closePopup() {
+    if (!popupOpen) return;
 
-  const handler = () => {
-    popup.remove();
     popupOpen = false;
+    popup.remove();
+    popupElement = null;
     clearTimeout(timeout);
-    document.removeEventListener("click", handler);
-  };
+    document.removeEventListener("click", outsideClick);
+  }
 
-  document.addEventListener("click", handler);
+  function outsideClick() {
+    closePopup();
+  }
+
+  document.addEventListener("click", outsideClick);
 }
 
 /* =========================
@@ -153,7 +169,7 @@ function claimDay(day) {
   const today = getTodayIndex();
 
   if (day !== today) {
-    showPopup("That quest is not available yet.");
+    showPopup("That quest is locked for today.");
     return;
   }
 
@@ -203,7 +219,7 @@ function showXP(amount) {
 }
 
 /* =========================
-   CENTER POPUP (SAFE)
+   CENTER POPUP
    ========================= */
 
 let messageLock = false;
