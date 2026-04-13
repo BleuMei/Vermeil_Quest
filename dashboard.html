@@ -6,16 +6,20 @@
   <title>Vermeil Quest</title>
 
   <link rel="stylesheet" href="styles.css">
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+  <!-- fantasy fonts (keep this, your UI depends on it now) -->
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Rajdhani:wght@400;500;600&display=swap" rel="stylesheet">
 </head>
 
 <body>
 
+  <!-- TITLE -->
   <h1 class="title">Vermeil Quest</h1>
   <p class="subtitle">Academy Interface Online</p>
 
   <!-- PROFILE -->
   <div class="profile-card">
+
     <h2 id="name"></h2>
     <p>ID: <span id="id"></span></p>
 
@@ -23,11 +27,13 @@
 
     <p>XP: <span id="xp"></span></p>
 
+    <!-- MANA XP BAR (UPDATED) -->
     <div class="xp-container">
-      <div id="xpBar"></div>
+      <div id="xpBar" class="xp-bar"></div>
     </div>
 
     <p>Streak: <span id="streak"></span> 🔥</p>
+
   </div>
 
   <!-- CLASSES -->
@@ -72,17 +78,17 @@
     <button onclick="logout()">Logout</button>
   </div>
 
-  <!-- CHEST (GLOBAL, NOT INSIDE MENU) -->
+  <!-- CHEST -->
   <div id="rewardChest" class="chest hidden" onclick="openChest()">
     🧰
   </div>
 
-  <!-- LEVEL UP SCREEN (GLOBAL) -->
+  <!-- LEVEL UP SCREEN -->
   <div id="levelUpScreen" class="level-up hidden"></div>
 
-  <!-- SCRIPTS -->
+  <!-- FIREBASE + MAIN SCRIPT -->
   <script type="module" src="firebase.js"></script>
-  <script src="dashboard.js"></script>
+  <script type="module" src="dashboard.js"></script>
 
 </body>
 </html>
