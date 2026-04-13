@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Dashboard - Vermeil Quest</title>
+
+  <link rel="stylesheet" href="styles.css">
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+  <h1>Welcome to Vermeil Quest</h1>
+
+  <div class="profile-card">
+    <h2 id="name"></h2>
+    <p id="id"></p>
+    <p>XP: <span id="xp"></span></p>
+    <p>Streak: <span id="streak"></span> 🔥</p>
+
+    <button onclick="addXP()">Complete Activity (+10 XP)</button>
+  </div>
+
+  <h2>Classes</h2>
+
+  <div class="class-grid">
+    <div class="class-card">CPE 101</div>
+    <div class="class-card">CPE 102</div>
+    <div class="class-card">Math for Engineers</div>
+  </div>
+
+  <script src="dashboard.js"></script>
+</body>
+</html>
