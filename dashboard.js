@@ -79,7 +79,7 @@ async function loadUserFromFirebase() {
     loadUserUI();
 
   } catch (err) {
-    console.log("Firebase failed, using local data", err);
+    console.log("Firebase failed:", err);
     loadUserUI();
   }
 }
@@ -91,6 +91,8 @@ async function loadUserFromFirebase() {
 function loadUserUI() {
   document.getElementById("name").innerText = user.name;
   document.getElementById("id").innerText = user.id;
+  document.getElementById("level").innerText = user.level;
+  document.getElementById("xp").innerText = `${user.xp % 100} / 100`;
 }
 
 /* =========================
@@ -120,7 +122,7 @@ function saveLocal() {
 }
 
 /* =========================
-   CLASS NAVIGATION (FIXED)
+   CLASS NAVIGATION
 ========================= */
 
 window.openLesson = function (url) {
@@ -129,7 +131,7 @@ window.openLesson = function (url) {
 };
 
 /* =========================
-   XP SYSTEM
+   XP SYSTEM (MANA BAR FIXED)
 ========================= */
 
 function addXP(amount = 10) {
@@ -145,34 +147,33 @@ function addXP(amount = 10) {
 ========================= */
 
 function updateLevelUI() {
-  let level = Math.floor(user.xp / 100) + 1;
+  let newLevel = Math.floor(user.xp / 100) + 1;
   let progress = user.xp % 100;
 
-  const leveledUp = level > user.level;
-  user.level = level;
+  const leveledUp = newLevel > user.level;
+  user.level = newLevel;
 
   const levelEl = document.getElementById("level");
   const xpEl = document.getElementById("xp");
   const bar = document.getElementById("xpBar");
 
-  if (levelEl) levelEl.innerText = level;
+  if (levelEl) levelEl.innerText = newLevel;
   if (xpEl) xpEl.innerText = `${progress} / 100`;
 
   if (bar) {
     bar.style.width = `${progress}%`;
     bar.style.transition = "width 0.6s ease";
-    bar.style.boxShadow = "0 0 20px rgba(96,165,250,0.7)";
 
+    // MANA PULSE EFFECT
+    bar.style.boxShadow = "0 0 22px rgba(96,165,250,0.8)";
     setTimeout(() => {
-      bar.style.boxShadow = "0 0 6px rgba(96,165,250,0.2)";
+      bar.style.boxShadow = "0 0 8px rgba(96,165,250,0.2)";
     }, 600);
   }
 
   saveUser();
 
-  if (leveledUp) {
-    showLevelUpScreen(level);
-  }
+  if (leveledUp) showLevelUpScreen(newLevel);
 }
 
 /* =========================
@@ -183,6 +184,7 @@ function getTodayIndex() {
   return (new Date().getDate() % 7) + 1;
 }
 
+/* VISUAL FIX: ACTIVE DAY POPS */
 function highlightToday() {
   const today = getTodayIndex();
 
@@ -190,15 +192,18 @@ function highlightToday() {
     const el = document.getElementById("day" + i);
     if (!el) continue;
 
-    el.classList.remove("active", "locked");
+    el.classList.remove("active", "locked", "glow");
 
-    if (i === today) el.classList.add("active");
-    else el.classList.add("locked");
+    if (i === today) {
+      el.classList.add("active", "glow");
+    } else {
+      el.classList.add("locked");
+    }
   }
 }
 
 /* =========================
-   DAILY POPUP
+   DAILY POPUP (FIXED FEEDBACK)
 ========================= */
 
 function showDailyPopup() {
@@ -209,7 +214,7 @@ function showDailyPopup() {
 
   popup.innerHTML = `
     <h3>Daily Quest Available</h3>
-    <p>Only today’s quest can be claimed</p>
+    <p>Claim today’s quest for rewards</p>
 
     <div class="day-grid">
       ${Array.from({ length: 7 }, (_, i) => i + 1)
@@ -228,29 +233,38 @@ function showDailyPopup() {
 }
 
 /* =========================
-   CLAIM DAY
+   CLAIM DAY (STREAK FIXED HERE)
 ========================= */
 
 function claimDay(day) {
   const today = getTodayIndex();
 
-  if (day !== today) return showPopup("Locked quest.");
-  if (user.dailyClaimed[day]) return showPopup("Already claimed.");
+  if (day !== today) return showPopup("That quest is locked.");
+  if (user.dailyClaimed[day]) return showPopup("Already claimed today.");
 
+  // reset + mark
   user.dailyClaimed = {};
   user.dailyClaimed[day] = new Date().toDateString();
 
   user.xp += 20;
 
+  // IMPORTANT: streak now actually updates correctly
+  const todayStr = new Date().toDateString();
+  if (user.lastLogin !== todayStr) {
+    user.streak = (user.streak || 0) + 1;
+    user.lastLogin = todayStr;
+  }
+
   saveUser();
   updateLevelUI();
   highlightToday();
 
+  showXP(20);
   showPopup("+20 XP earned");
 }
 
 /* =========================
-   STREAK
+   STREAK (SAFETY SYNC)
 ========================= */
 
 function updateStreak() {
@@ -272,6 +286,7 @@ function showXP(amount) {
   const p = document.createElement("div");
   p.className = "xp-popup";
   p.innerText = `+${amount} XP`;
+
   document.body.appendChild(p);
   setTimeout(() => p.remove(), 1200);
 }
@@ -282,7 +297,7 @@ function showPopup(message) {
   p.innerText = message;
 
   document.body.appendChild(p);
-  setTimeout(() => p.remove(), 4000);
+  setTimeout(() => p.remove(), 3500);
 }
 
 /* =========================
@@ -302,3 +317,7 @@ function showLevelUpScreen(level) {
 
   setTimeout(() => screen.classList.add("hidden"), 2000);
 }
+
+/* =========================
+   VISUAL GLOW CLASS (optional CSS hook)
+========================= */
