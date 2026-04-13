@@ -7,7 +7,7 @@
 
   <link rel="stylesheet" href="styles.css">
 
-  <!-- fantasy fonts (keep this, your UI depends on it now) -->
+  <!-- FANTASY FONTS -->
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Rajdhani:wght@400;500;600&display=swap" rel="stylesheet">
 </head>
 
@@ -24,10 +24,9 @@
     <p>ID: <span id="id"></span></p>
 
     <p>Level: <span id="level"></span></p>
-
     <p>XP: <span id="xp"></span></p>
 
-    <!-- MANA XP BAR (UPDATED) -->
+    <!-- MANA XP BAR -->
     <div class="xp-container">
       <div id="xpBar" class="xp-bar"></div>
     </div>
@@ -48,24 +47,18 @@
   <!-- DAILY QUEST -->
   <h2>Daily Quest</h2>
 
-  <div class="day-wrapper">
-
-    <div class="day-row">
-      <div class="day-box" id="day1" onclick="claimDay(1)">Day 1</div>
-      <div class="day-box" id="day2" onclick="claimDay(2)">Day 2</div>
-      <div class="day-box" id="day3" onclick="claimDay(3)">Day 3</div>
-      <div class="day-box" id="day4" onclick="claimDay(4)">Day 4</div>
-    </div>
-
-    <div class="day-row">
-      <div class="day-box" id="day5" onclick="claimDay(5)">Day 5</div>
-      <div class="day-box" id="day6" onclick="claimDay(6)">Day 6</div>
-      <div class="day-box" id="day7" onclick="claimDay(7)">Day 7</div>
-    </div>
-
+  <!-- CLEAN GRID (FIXED) -->
+  <div class="day-grid">
+    <div class="day-box" id="day1" onclick="claimDay(1)">Day 1</div>
+    <div class="day-box" id="day2" onclick="claimDay(2)">Day 2</div>
+    <div class="day-box" id="day3" onclick="claimDay(3)">Day 3</div>
+    <div class="day-box" id="day4" onclick="claimDay(4)">Day 4</div>
+    <div class="day-box" id="day5" onclick="claimDay(5)">Day 5</div>
+    <div class="day-box" id="day6" onclick="claimDay(6)">Day 6</div>
+    <div class="day-box" id="day7" onclick="claimDay(7)">Day 7</div>
   </div>
 
-  <!-- BURGER -->
+  <!-- BURGER MENU -->
   <div class="burger" onclick="toggleMenu()">☰</div>
 
   <!-- SIDE MENU -->
@@ -78,7 +71,7 @@
     <button onclick="logout()">Logout</button>
   </div>
 
-  <!-- CHEST -->
+  <!-- REWARD CHEST -->
   <div id="rewardChest" class="chest hidden" onclick="openChest()">
     🧰
   </div>
@@ -86,8 +79,7 @@
   <!-- LEVEL UP SCREEN -->
   <div id="levelUpScreen" class="level-up hidden"></div>
 
-  <!-- FIREBASE + MAIN SCRIPT -->
-  <script type="module" src="firebase.js"></script>
+  <!-- MAIN SCRIPT ONLY (IMPORTANT) -->
   <script type="module" src="dashboard.js"></script>
 
 </body>
