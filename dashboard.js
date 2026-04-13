@@ -92,6 +92,19 @@ function claimDay(day) {
   updateLevel();
   updateDays();
 }
+function updateDays() {
+  let user = JSON.parse(localStorage.getItem("user"));
+
+  for (let i = 1; i <= 7; i++) {
+    let btn = document.getElementById("day" + i);
+
+    if (user.dailyClaimed[i]) {
+      btn.disabled = true;
+      btn.innerText = "Completed";
+      btn.style.opacity = 0.5;
+    }
+  }
+}
 
 updateStreak();
 loadUser();
