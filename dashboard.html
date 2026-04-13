@@ -61,6 +61,18 @@
       <div class="day-box" id="day7" onclick="claimDay(7)">Day 7</div>
     </div>
 
+  <!-- BURGER BUTTON -->
+  <div class="burger" onclick="toggleMenu()">☰</div>
+
+  <!-- SIDE MENU -->
+  <div id="sideMenu" class="side-menu">
+    <h3>Menu</h3>
+
+    <button onclick="closeMenu(); window.location.reload()">Dashboard</button>
+    <button onclick="alert('Achievements coming soon')">Achievements</button>
+    <button onclick="alert('Inventory coming soon')">Inventory</button>
+    <button onclick="logout()">Logout</button>
+
   </div>
 
   <script src="dashboard.js"></script>
