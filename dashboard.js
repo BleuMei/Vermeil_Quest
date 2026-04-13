@@ -313,3 +313,21 @@ function showFloatingReward(text) {
 function saveUser() {
   localStorage.setItem("user", JSON.stringify(user));
 }
+
+function showLevelUpScreen(level) {
+  const screen = document.getElementById("levelUpScreen");
+  if (!screen) return;
+
+  screen.classList.remove("hidden");
+
+  screen.innerHTML = `
+    <div>
+      <h1>LEVEL UP</h1>
+      <p>You reached Level ${level}</p>
+    </div>
+  `;
+
+  setTimeout(() => {
+    screen.classList.add("hidden");
+  }, 2000);
+}
