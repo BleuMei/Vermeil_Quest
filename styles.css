@@ -392,3 +392,18 @@ button:hover {
   75% { transform: translate(-52%, -50%) rotate(-3deg); }
   100% { transform: translate(-50%, -50%) rotate(0deg); }
 }
+
+.center-popup {
+  text-align: center;
+}
+
+/* optional glow variants */
+.rare {
+  border: 1px solid #60a5fa;
+  box-shadow: 0 0 25px rgba(96,165,250,0.5);
+}
+
+.legendary {
+  border: 1px solid #fbbf24;
+  box-shadow: 0 0 30px rgba(251,191,36,0.6);
+}
