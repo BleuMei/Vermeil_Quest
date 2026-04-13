@@ -55,5 +55,22 @@ function openLesson(url) {
   window.location.href = "lesson.html";
 }
 
+function updateLevel() {
+  let user = JSON.parse(localStorage.getItem("user"));
+
+  let level = Math.floor(user.xp / 100) + 1;
+  let progress = user.xp % 100;
+
+  user.level = level;
+
+  document.getElementById("level").innerText = level;
+  document.getElementById("xp").innerText = `${progress} / 100`;
+
+  // progress bar update
+  document.getElementById("xpBar").style.width = `${progress}%`;
+
+  localStorage.setItem("user", JSON.stringify(user));
+}
+
 updateStreak();
 loadUser();
