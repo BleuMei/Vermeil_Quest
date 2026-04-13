@@ -19,13 +19,7 @@ body {
   overflow-x: hidden;
 }
 
-/* REMOVE THE GLOBAL STACKING TRAP */
-/* DO NOT use * { position: relative } */
-
-/* =========================
-   MAGIC BACKGROUND
-   ========================= */
-
+/* background particles */
 body::before {
   content: "";
   position: fixed;
@@ -40,6 +34,12 @@ body::before {
 @keyframes drift {
   from { transform: translateY(0px); }
   to { transform: translateY(-250px); }
+}
+
+/* keep UI above background */
+body > * {
+  position: relative;
+  z-index: 1;
 }
 
 /* =========================
@@ -77,11 +77,10 @@ p {
   box-shadow: 0 10px 30px rgba(0,0,0,0.45);
   transition: all 0.25s ease;
   color: #e5e7eb;
-  z-index: 1;
 }
 
 /* =========================
-   LOGIN CARD
+   LOGIN
    ========================= */
 
 .center-card {
@@ -91,7 +90,10 @@ p {
   padding: 25px;
 }
 
-/* INPUTS (FIXED FONT HERE) */
+/* =========================
+   INPUTS
+   ========================= */
+
 input {
   font-family: "Rajdhani", sans-serif;
   font-size: 16px;
@@ -104,7 +106,6 @@ input {
   color: white;
   outline: none;
   margin-top: 10px;
-  transition: 0.2s;
 }
 
 input:focus {
@@ -135,7 +136,7 @@ button:hover {
 }
 
 /* =========================
-   PROFILE CARD
+   PROFILE
    ========================= */
 
 .profile-card {
@@ -191,7 +192,7 @@ button:hover {
 }
 
 /* =========================
-   STREAK SYSTEM POPUP
+   CENTER POPUP
    ========================= */
 
 .center-popup {
@@ -205,37 +206,26 @@ button:hover {
   border-radius: 16px;
   font-size: 18px;
   color: white;
-  z-index: 9999;
+  z-index: 99999;
   box-shadow: 0 0 40px rgba(59,130,246,0.4);
   text-align: center;
 }
 
 /* =========================
-   MOBILE
+   DAILY GRID (FIXED FEEL)
    ========================= */
-
-@media (max-width: 600px) {
-  h1 { font-size: 22px; }
-  h2 { font-size: 18px; }
-
-  button { width: 100%; }
-
-  .center-card,
-  .profile-card {
-    width: 90%;
-  }
-}
 
 .day-grid {
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 10px;
   margin-top: 15px;
+  padding: 0 10px;
 }
 
 .day-box {
-  padding: 12px;
-  border-radius: 12px;
+  padding: 14px;
+  border-radius: 14px;
   background: rgba(255,255,255,0.08);
   border: 1px solid rgba(147,197,253,0.2);
   cursor: pointer;
@@ -245,6 +235,7 @@ button:hover {
 
 .day-box:hover {
   transform: scale(1.05);
+  border-color: #60a5fa;
 }
 
 .day-box.active {
@@ -255,4 +246,19 @@ button:hover {
 .day-box.locked {
   opacity: 0.3;
   pointer-events: none;
+}
+
+/* =========================
+   MOBILE
+   ========================= */
+
+@media (max-width: 600px) {
+  h1 { font-size: 22px; }
+  h2 { font-size: 18px; }
+
+  .day-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  button { width: 100%; }
 }
