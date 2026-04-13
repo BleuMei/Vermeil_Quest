@@ -46,25 +46,28 @@ user.dailyClaimed ??= {};
 let userRef;
 
 /* =========================
-   SAFE INIT (NO MORE GRAY SCREEN)
+   SAFE BOOTSTRAP (CRITICAL FIX)
 ========================= */
 
-document.addEventListener("DOMContentLoaded", init);
-
-async function init() {
+document.addEventListener("DOMContentLoaded", async () => {
   try {
-    await loadUserFromFirebase();
-
-    renderUI();
-    updateLevelUI();
-    highlightToday();
-    syncStreakUI();
-    attachDayListeners();
-
-    console.log("Dashboard loaded successfully");
+    await initDashboard();
   } catch (err) {
-    console.error("Dashboard crash prevented:", err);
+    console.error("Dashboard failed to initialize:", err);
   }
+});
+
+async function initDashboard() {
+  await loadUserFromFirebase();
+
+  renderUI();
+  updateLevelUI();
+  highlightToday();
+  syncStreakUI();
+
+  attachDayListeners();
+
+  console.log("Dashboard initialized");
 }
 
 /* =========================
@@ -85,7 +88,7 @@ async function loadUserFromFirebase() {
 
     saveLocal();
   } catch (err) {
-    console.log("Firebase failed, offline mode:", err);
+    console.warn("Firebase offline or blocked:", err);
   }
 }
 
@@ -121,7 +124,7 @@ async function saveUser() {
   try {
     await updateDoc(userRef, user);
   } catch (err) {
-    console.log("Save failed:", err);
+    console.warn("Save failed:", err);
   }
 }
 
@@ -130,7 +133,7 @@ function saveLocal() {
 }
 
 /* =========================
-   LESSON NAVIGATION (GLOBAL SAFE)
+   LESSON NAVIGATION
 ========================= */
 
 window.openLesson = function (url) {
@@ -151,7 +154,7 @@ function addXP(amount = 10) {
 }
 
 /* =========================
-   LEVEL + MANA BAR
+   LEVEL SYSTEM
 ========================= */
 
 function updateLevelUI() {
@@ -193,7 +196,7 @@ function todayStr() {
 }
 
 /* =========================
-   VISUAL HIGHLIGHT (SAFE)
+   HIGHLIGHT TODAY
 ========================= */
 
 function highlightToday() {
@@ -212,27 +215,30 @@ function highlightToday() {
 }
 
 /* =========================
-   CLICK FIX (NO DEAD BUTTONS EVER AGAIN)
+   CLICK FIX (THIS WAS YOUR MAIN PROBLEM AREA)
 ========================= */
 
 function attachDayListeners() {
   for (let i = 1; i <= 7; i++) {
     const el = document.getElementById("day" + i);
 
-    if (!el) continue;
+    if (!el) {
+      console.warn(`Missing element: day${i}`);
+      continue;
+    }
 
     el.style.cursor = "pointer";
     el.style.pointerEvents = "auto";
 
-    el.onclick = (e) => {
-      e.stopPropagation();
+    el.onclick = () => {
+      console.log("Clicked day:", i);
       claimDay(i);
     };
   }
 }
 
 /* =========================
-   CLAIM DAY (DUOLINGO-STYLE STREAK)
+   CLAIM DAY
 ========================= */
 
 window.claimDay = function (day) {
@@ -246,15 +252,12 @@ window.claimDay = function (day) {
     return popup("Already claimed today.");
   }
 
-  // mark claim
   user.lastClaimDate = todayStr();
   user.dailyClaimed = {};
   user.dailyClaimed[day] = true;
 
-  // XP reward
   user.xp += 20;
 
-  // streak logic (stable + Duolingo-ish)
   const yesterday = new Date();
   yesterday.setDate(yesterday.getDate() - 1);
 
