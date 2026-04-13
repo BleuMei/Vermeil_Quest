@@ -51,7 +51,8 @@ function enterClass(className) {
 }
 
 function openLesson(url) {
-  window.open(url, "_blank"); // opens in new tab
+  localStorage.setItem("lessonLink", url);
+  window.location.href = "lesson.html";
 }
 
 updateStreak();
