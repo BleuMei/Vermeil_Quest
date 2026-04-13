@@ -4,46 +4,113 @@ if (!user) {
   window.location.href = "index.html";
 }
 
+/* =========================
+   INIT DEFAULT STRUCTURE
+   ========================= */
+
+user.dailyClaimed = user.dailyClaimed || {};
+user.lastLogin = user.lastLogin || null;
+
+/* =========================
+   LOAD UI
+   ========================= */
+
 function loadUser() {
   document.getElementById("name").innerText = user.name;
   document.getElementById("id").innerText = user.id;
-  document.getElementById("xp").innerText = user.xp;
-  document.getElementById("streak").innerText = user.streak;
+
+  updateLevelUI();
+  updateDaysUI();
 }
 
-function addXP() {
-  user.xp += 10;
+/* =========================
+   XP SYSTEM
+   ========================= */
 
-  showXP(10);
+function addXP(amount = 10) {
+  user.xp += amount;
 
-  localStorage.setItem("user", JSON.stringify(user));
-  loadUser();
+  saveUser();
+  showXP(amount);
+  updateLevelUI();
 }
 
-// XP popup animation
-function showXP(amount) {
-  const popup = document.createElement("div");
-  popup.className = "xp-popup";
-  popup.innerText = `+${amount} XP`;
+/* =========================
+   LEVEL SYSTEM (0–100)
+   ========================= */
 
-  document.body.appendChild(popup);
+function updateLevelUI() {
+  let level = Math.floor(user.xp / 100) + 1;
+  let progress = user.xp % 100;
 
-  setTimeout(() => {
-    popup.remove();
-  }, 1200);
+  user.level = level;
+
+  document.getElementById("level").innerText = level;
+  document.getElementById("xp").innerText = `${progress} / 100`;
+
+  let bar = document.getElementById("xpBar");
+  if (bar) bar.style.width = `${progress}%`;
+
+  saveUser();
 }
 
-// streak system
-function updateStreak() {
-  let last = localStorage.getItem("lastVisit");
+/* =========================
+   DAILY QUEST SYSTEM (1–7 ONLY)
+   ========================= */
+
+function claimDay(day) {
   let today = new Date().toDateString();
 
-  if (last !== today) {
-    user.streak += 1;
-    localStorage.setItem("lastVisit", today);
-    localStorage.setItem("user", JSON.stringify(user));
+  if (user.dailyClaimed[day] === today) {
+    showPopup("You already claimed today’s reward.");
+    return;
+  }
+
+  user.dailyClaimed = {}; // only ONE active day at a time
+  user.dailyClaimed[day] = today;
+
+  user.xp += 20;
+
+  saveUser();
+
+  showXP(20);
+  updateLevelUI();
+  updateDaysUI();
+
+  showPopup(`Day ${day} completed. +20 XP earned.`);
+}
+
+function updateDaysUI() {
+  for (let i = 1; i <= 7; i++) {
+    let btn = document.getElementById("day" + i);
+    if (!btn) continue;
+
+    if (user.dailyClaimed[i]) {
+      btn.innerText = "Completed";
+      btn.disabled = true;
+      btn.style.opacity = 0.5;
+    }
   }
 }
+
+/* =========================
+   STREAK SYSTEM (FIXED)
+   ========================= */
+
+function updateStreak() {
+  let today = new Date().toDateString();
+
+  if (user.lastLogin !== today) {
+    user.streak = (user.lastLogin) ? user.streak + 1 : 1;
+    user.lastLogin = today;
+  }
+
+  saveUser();
+}
+
+/* =========================
+   CLASS NAVIGATION
+   ========================= */
 
 function enterClass(className) {
   localStorage.setItem("currentClass", className);
@@ -55,90 +122,18 @@ function openLesson(url) {
   window.location.href = "lesson.html";
 }
 
-function updateLevel() {
-  let user = JSON.parse(localStorage.getItem("user"));
+/* =========================
+   POPUPS
+   ========================= */
 
-  let level = Math.floor(user.xp / 100) + 1;
-  let progress = user.xp % 100;
+function showXP(amount) {
+  const popup = document.createElement("div");
+  popup.className = "xp-popup";
+  popup.innerText = `+${amount} XP`;
 
-  user.level = level;
+  document.body.appendChild(popup);
 
-  document.getElementById("level").innerText = level;
-  document.getElementById("xp").innerText = `${progress} / 100`;
-
-  // progress bar update
-  document.getElementById("xpBar").style.width = `${progress}%`;
-
-  localStorage.setItem("user", JSON.stringify(user));
-}
-
-function claimDay(day) {
-  let user = JSON.parse(localStorage.getItem("user"));
-  let today = new Date().toDateString();
-
-  if (user.dailyClaimed[day] === today) {
-    alert("Already claimed today.");
-    return;
-  }
-
-  user.dailyClaimed[day] = today;
-
-  user.xp += 20;
-
-  showXP(20);
-
-  localStorage.setItem("user", JSON.stringify(user));
-
-  updateLevel();
-  updateDays();
-}
-function updateDays() {
-  let user = JSON.parse(localStorage.getItem("user"));
-
-  for (let i = 1; i <= 7; i++) {
-    let btn = document.getElementById("day" + i);
-
-    if (user.dailyClaimed[i]) {
-      btn.disabled = true;
-      btn.innerText = "Completed";
-      btn.style.opacity = 0.5;
-    }
-  }
-}
-
-function claimStreak() {
-  let user = JSON.parse(localStorage.getItem("user"));
-  let today = new Date().toDateString();
-
-  // already claimed today
-  if (user.lastLogin === today) {
-    showPopup("⚠️ You already claimed today’s reward.");
-    return;
-  }
-
-  // update streak
-  if (user.lastLogin) {
-    let last = new Date(user.lastLogin);
-    let now = new Date(today);
-
-    let diff = (now - last) / (1000 * 60 * 60 * 24);
-
-    if (diff === 1) {
-      user.streak += 1; // continue streak
-    } else {
-      user.streak = 1; // reset streak
-    }
-  } else {
-    user.streak = 1;
-  }
-
-  user.lastLogin = today;
-  user.xp += 20;
-
-  localStorage.setItem("user", JSON.stringify(user));
-
-  updateUI();
-  showPopup(`🔥 Day ${user.streak} streak claimed! +20 XP awarded.`);
+  setTimeout(() => popup.remove(), 1200);
 }
 
 let popupActive = false;
@@ -154,13 +149,11 @@ function showPopup(message) {
 
   document.body.appendChild(popup);
 
-  // disappears after 5 seconds IF not interacted
   let timeout = setTimeout(() => {
     popup.remove();
     popupActive = false;
   }, 5000);
 
-  // disappears if user clicks anywhere
   document.addEventListener("click", function handler() {
     popup.remove();
     popupActive = false;
@@ -168,6 +161,18 @@ function showPopup(message) {
     document.removeEventListener("click", handler);
   });
 }
+
+/* =========================
+   SAVE HELPERS
+   ========================= */
+
+function saveUser() {
+  localStorage.setItem("user", JSON.stringify(user));
+}
+
+/* =========================
+   INIT
+   ========================= */
 
 updateStreak();
 loadUser();
