@@ -1,25 +1,57 @@
+/* =========================
+   FIREBASE INIT
+   ========================= */
+
+// Firebase v9 modular import style (CDN / Vite compatible)
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import {
+  getFirestore,
+  doc,
+  getDoc,
+  setDoc,
+  updateDoc
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+// Your config
+const firebaseConfig = {
+  apiKey: "AIzaSyBMc36-Vg_Ger814ZWz_JHs7KG-csgGggA",
+  authDomain: "vermeil-quest.firebaseapp.com",
+  projectId: "vermeil-quest",
+  storageBucket: "vermeil-quest.firebasestorage.app",
+  messagingSenderId: "943194791633",
+  appId: "1:943194791633:web:a3ddd0f3914f518171aff0",
+  measurementId: "G-02CJBN8HS9"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+/* =========================
+   USER STATE
+   ========================= */
+
 let user = JSON.parse(localStorage.getItem("user"));
 
 if (!user) {
   window.location.href = "index.html";
 }
 
-/* =========================
-   SAFE DEFAULTS
-   ========================= */
+/* fallback defaults */
+user.xp ||= 0;
+user.level ||= 1;
+user.streak ||= 0;
+user.dailyClaimed ||= {};
+user.lastLogin ||= null;
 
-user.xp = user.xp || 0;
-user.level = user.level || 1;
-user.streak = user.streak || 0;
-user.dailyClaimed = user.dailyClaimed || {};
-user.lastLogin = user.lastLogin || null;
+let userRef;
 
 /* =========================
    INIT
    ========================= */
 
-window.onload = () => {
-  loadUser();
+window.onload = async () => {
+  await loadUserFromFirebase();
+
   updateStreak();
   updateLevelUI();
   highlightToday();
@@ -27,19 +59,62 @@ window.onload = () => {
 };
 
 /* =========================
-   LOAD USER
+   FIREBASE LOAD
    ========================= */
 
-function loadUser() {
-  const nameEl = document.getElementById("name");
-  const idEl = document.getElementById("id");
+async function loadUserFromFirebase() {
+  try {
+    userRef = doc(db, "users", user.id);
 
-  if (nameEl) nameEl.innerText = user.name;
-  if (idEl) idEl.innerText = user.id;
+    const snap = await getDoc(userRef);
+
+    if (snap.exists()) {
+      const data = snap.data();
+      user = { ...user, ...data };
+    } else {
+      await setDoc(userRef, user);
+    }
+
+    saveLocal();
+    loadUserUI();
+
+  } catch (err) {
+    console.log("Firebase error, using local data", err);
+    loadUserUI();
+  }
 }
 
 /* =========================
-   CLASS NAVIGATION (FIXED)
+   UI LOAD
+   ========================= */
+
+function loadUserUI() {
+  document.getElementById("name").innerText = user.name;
+  document.getElementById("id").innerText = user.id;
+}
+
+/* =========================
+   SAVE SYSTEM (FIREBASE + LOCAL)
+   ========================= */
+
+async function saveUser() {
+  saveLocal();
+
+  if (!userRef) return;
+
+  try {
+    await updateDoc(userRef, user);
+  } catch (err) {
+    console.log("Save failed:", err);
+  }
+}
+
+function saveLocal() {
+  localStorage.setItem("user", JSON.stringify(user));
+}
+
+/* =========================
+   CLASS NAVIGATION
    ========================= */
 
 function openLesson(url) {
@@ -53,13 +128,14 @@ function openLesson(url) {
 
 function addXP(amount = 10) {
   user.xp += amount;
+
   saveUser();
   showXP(amount);
   updateLevelUI();
 }
 
 /* =========================
-   LEVEL SYSTEM
+   LEVEL SYSTEM (MANA STYLE BAR)
    ========================= */
 
 function updateLevelUI() {
@@ -67,7 +143,6 @@ function updateLevelUI() {
   let progress = user.xp % 100;
 
   const leveledUp = user.level && level > user.level;
-
   user.level = level;
 
   const levelEl = document.getElementById("level");
@@ -78,13 +153,13 @@ function updateLevelUI() {
   if (xpEl) xpEl.innerText = `${progress} / 100`;
 
   if (bar) {
-    bar.style.transition = "width 0.6s ease";
     bar.style.width = `${progress}%`;
+    bar.style.transition = "width 0.6s ease";
 
-    // mana glow pulse
-    bar.style.boxShadow = "0 0 18px rgba(96,165,250,0.6)";
+    // mana pulse
+    bar.style.boxShadow = "0 0 20px rgba(96,165,250,0.7)";
     setTimeout(() => {
-      bar.style.boxShadow = "0 0 8px rgba(96,165,250,0.2)";
+      bar.style.boxShadow = "0 0 6px rgba(96,165,250,0.2)";
     }, 600);
   }
 
@@ -112,16 +187,13 @@ function highlightToday() {
 
     el.classList.remove("active", "locked");
 
-    if (i === today) {
-      el.classList.add("active");
-    } else {
-      el.classList.add("locked");
-    }
+    if (i === today) el.classList.add("active");
+    else el.classList.add("locked");
   }
 }
 
 /* =========================
-   DAILY POPUP (LOGIN)
+   DAILY POPUP
    ========================= */
 
 let popupOpen = false;
@@ -152,20 +224,10 @@ function showDailyPopup() {
 
   document.body.appendChild(popup);
 
-  const timeout = setTimeout(close, 5000);
-
-  function close() {
-    popupOpen = false;
+  setTimeout(() => {
     popup.remove();
-    clearTimeout(timeout);
-    document.removeEventListener("click", outside);
-  }
-
-  function outside() {
-    close();
-  }
-
-  document.addEventListener("click", outside);
+    popupOpen = false;
+  }, 5000);
 }
 
 /* =========================
@@ -175,15 +237,9 @@ function showDailyPopup() {
 function claimDay(day) {
   const today = getTodayIndex();
 
-  if (day !== today) {
-    showPopup("That quest is locked for today.");
-    return;
-  }
+  if (day !== today) return showPopup("Locked quest.");
 
-  if (user.dailyClaimed[day]) {
-    showPopup("Already completed today.");
-    return;
-  }
+  if (user.dailyClaimed[day]) return showPopup("Already claimed.");
 
   user.dailyClaimed = {};
   user.dailyClaimed[day] = new Date().toDateString();
@@ -194,12 +250,11 @@ function claimDay(day) {
   updateLevelUI();
   highlightToday();
 
-  showChest();
-  showPopup(`Quest Complete: Day ${day} +20 XP`);
+  showPopup(`+20 XP earned`);
 }
 
 /* =========================
-   STREAK SYSTEM
+   STREAK
    ========================= */
 
 function updateStreak() {
@@ -214,21 +269,16 @@ function updateStreak() {
 }
 
 /* =========================
-   XP POPUP
+   POPUPS
    ========================= */
 
 function showXP(amount) {
-  const popup = document.createElement("div");
-  popup.className = "xp-popup";
-  popup.innerText = `+${amount} XP`;
-
-  document.body.appendChild(popup);
-  setTimeout(() => popup.remove(), 1200);
+  const p = document.createElement("div");
+  p.className = "xp-popup";
+  p.innerText = `+${amount} XP`;
+  document.body.appendChild(p);
+  setTimeout(() => p.remove(), 1200);
 }
-
-/* =========================
-   CENTER POPUP
-   ========================= */
 
 let messageLock = false;
 
@@ -236,83 +286,21 @@ function showPopup(message) {
   if (messageLock) return;
   messageLock = true;
 
-  const popup = document.createElement("div");
-  popup.className = "center-popup";
-  popup.innerText = message;
+  const p = document.createElement("div");
+  p.className = "center-popup";
+  p.innerText = message;
 
-  document.body.appendChild(popup);
+  document.body.appendChild(p);
 
   setTimeout(() => {
-    popup.remove();
+    p.remove();
     messageLock = false;
-  }, 5000);
+  }, 4000);
 }
 
 /* =========================
-   BURGER MENU
+   LEVEL UP SCREEN
    ========================= */
-
-function toggleMenu() {
-  document.getElementById("sideMenu")?.classList.toggle("open");
-}
-
-function closeMenu() {
-  document.getElementById("sideMenu")?.classList.remove("open");
-}
-
-function logout() {
-  localStorage.removeItem("user");
-  window.location.href = "index.html";
-}
-
-/* =========================
-   CHEST SYSTEM
-   ========================= */
-
-function showChest() {
-  const chest = document.getElementById("rewardChest");
-  if (!chest) return;
-
-  chest.classList.remove("hidden");
-  chest.classList.add("shake");
-
-  setTimeout(() => chest.classList.remove("shake"), 1000);
-}
-
-function openChest() {
-  const chest = document.getElementById("rewardChest");
-  if (!chest) return;
-
-  chest.innerText = "✨";
-  chest.classList.remove("shake");
-
-  let reward = 20;
-
-  user.xp += reward;
-  saveUser();
-  updateLevelUI();
-
-  showFloatingReward(`+${reward} XP`);
-
-  setTimeout(() => chest.classList.add("hidden"), 800);
-}
-
-function showFloatingReward(text) {
-  const popup = document.createElement("div");
-  popup.className = "xp-popup";
-  popup.innerText = text;
-
-  document.body.appendChild(popup);
-  setTimeout(() => popup.remove(), 1200);
-}
-
-/* =========================
-   SAVE
-   ========================= */
-
-function saveUser() {
-  localStorage.setItem("user", JSON.stringify(user));
-}
 
 function showLevelUpScreen(level) {
   const screen = document.getElementById("levelUpScreen");
@@ -321,13 +309,9 @@ function showLevelUpScreen(level) {
   screen.classList.remove("hidden");
 
   screen.innerHTML = `
-    <div>
-      <h1>LEVEL UP</h1>
-      <p>You reached Level ${level}</p>
-    </div>
+    <h1>LEVEL UP</h1>
+    <p>You reached Level ${level}</p>
   `;
 
-  setTimeout(() => {
-    screen.classList.add("hidden");
-  }, 2000);
+  setTimeout(() => screen.classList.add("hidden"), 2000);
 }
