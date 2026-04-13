@@ -122,9 +122,8 @@ button:hover {
 
 /* CLASS CARD */
 .class-card {
-  width: 160px;
-  padding: 20px;
-  cursor: pointer;
+  width: 100%;
+  padding: 18px;
 }
 
 .class-card:hover {
