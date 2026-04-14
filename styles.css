@@ -10,13 +10,16 @@
 body {
   margin: 0;
   font-family: "Rajdhani", sans-serif;
-  text-align: center;
   color: #e5e7eb;
   min-height: 100vh;
   font-size: 16px;
   background: radial-gradient(circle at top, #1b2a4a, #0b1020 45%, #050814);
   overflow-x: hidden;
-  position: relative;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
 }
 
 /* particles */
@@ -36,9 +39,12 @@ body::before {
   to { transform: translateY(-250px); }
 }
 
-/* SAFE LAYERING (removed dangerous global z-index rule) */
+/* keep UI above particles */
 body > * {
   position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 900px;
 }
 
 /* =========================
@@ -49,10 +55,15 @@ h1 {
   font-family: "Cinzel", serif;
   font-size: 32px;
   color: #93c5fd;
-  text-shadow: 0 0 18px rgba(96,165,250,0.35);
+  text-align: center;
 }
 
-h2, p {
+h2 {
+  text-align: center;
+  color: #cbd5e1;
+}
+
+p {
   color: #cbd5e1;
 }
 
@@ -70,14 +81,19 @@ h2, p {
   box-shadow: 0 10px 30px rgba(0,0,0,0.45);
 }
 
+/* profile spacing fix */
+.profile-card {
+  padding: 20px;
+  margin-top: 10px;
+}
+
 /* =========================
    LOGIN
 ========================= */
 
 .center-card {
-  width: 90%;
   max-width: 340px;
-  margin: 100px auto;
+  margin-top: 80px;
   padding: 25px;
 }
 
@@ -91,16 +107,11 @@ input {
   padding: 12px;
   border-radius: 10px;
   border: 1px solid rgba(147,197,253,0.25);
-  width: 90%;
+  width: 100%;
   background: rgba(0,0,0,0.35);
   color: white;
   margin-top: 10px;
   outline: none;
-}
-
-input:focus {
-  border-color: #60a5fa;
-  box-shadow: 0 0 15px rgba(96,165,250,0.3);
 }
 
 /* =========================
@@ -121,7 +132,6 @@ button {
 
 button:hover {
   transform: translateY(-3px) scale(1.03);
-  box-shadow: 0 0 25px rgba(59,130,246,0.5);
 }
 
 /* =========================
@@ -132,79 +142,15 @@ button:hover {
   display: flex;
   justify-content: center;
   gap: 12px;
-  padding: 15px;
   flex-wrap: wrap;
+  margin-top: 10px;
 }
 
 .class-card {
   min-width: 140px;
   padding: 16px;
+  text-align: center;
   cursor: pointer;
-  text-align: center;
-  font-family: "Cinzel", serif;
-  transition: 0.2s ease;
-}
-
-.class-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 0 25px rgba(59,130,246,0.5);
-}
-
-/* =========================
-   XP POPUP
-========================= */
-
-.xp-popup {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  background: linear-gradient(135deg, #3b82f6, #60a5fa);
-  padding: 10px 15px;
-  border-radius: 12px;
-  font-weight: 600;
-  z-index: 99999;
-  animation: xpFade 1.2s ease forwards;
-  pointer-events: none;
-}
-
-@keyframes xpFade {
-  0% { opacity: 0; transform: translateY(-10px); }
-  15% { opacity: 1; }
-  100% { opacity: 0; transform: translateY(-25px); }
-}
-
-/* =========================
-   CENTER POPUP (FIXED CRASH PROTECTION)
-========================= */
-
-.center-popup {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 90%;
-  max-width: 420px;
-
-  background: rgba(17, 25, 40, 0.97);
-  border: 1px solid rgba(96,165,250,0.5);
-  padding: 20px;
-  border-radius: 16px;
-
-  z-index: 999999;
-  text-align: center;
-
-  animation: popIn 0.15s ease;
-  pointer-events: none; /* prevents click-block lockups */
-}
-
-@keyframes popIn {
-  from { transform: translate(-50%, -50%) scale(0.9); opacity: 0; }
-  to { transform: translate(-50%, -50%) scale(1); opacity: 1; }
-}
-
-/* auto-hide safety (prevents stuck overlay bug) */
-.center-popup:empty {
-  display: none;
 }
 
 /* =========================
@@ -216,54 +162,29 @@ button:hover {
   grid-template-columns: repeat(4, 1fr);
   gap: 10px;
   margin-top: 12px;
+  width: 100%;
 }
 
 .day-box {
   font-family: "Cinzel", serif;
   padding: 14px;
   border-radius: 14px;
-
   background: rgba(255,255,255,0.06);
   border: 1px solid rgba(147,197,253,0.2);
-
   cursor: pointer;
+  text-align: center;
   transition: 0.2s ease;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
-/* hover */
 .day-box:hover {
-  transform: scale(1.06);
-  border-color: #60a5fa;
+  transform: scale(1.05);
 }
 
-/* active */
-.day-box.active,
-.day-box.glow {
+.day-box.glow,
+.day-box.active {
   border: 2px solid #60a5fa;
-  box-shadow: 0 0 28px rgba(96,165,250,0.9);
-  transform: scale(1.12);
-}
-
-/* locked */
-.day-box.locked {
-  opacity: 0.3;
-  filter: grayscale(90%);
-  pointer-events: none;
-}
-
-/* click animation */
-.day-box.clicked {
-  animation: clickPop 0.3s ease;
-}
-
-@keyframes clickPop {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.2); }
-  100% { transform: scale(1); }
+  box-shadow: 0 0 25px rgba(96,165,250,0.9);
+  transform: scale(1.1);
 }
 
 /* =========================
@@ -284,15 +205,37 @@ button:hover {
   width: 0%;
   background: linear-gradient(90deg, #3b82f6, #60a5fa, #93c5fd);
   transition: width 0.6s ease;
-  box-shadow: 0 0 12px rgba(96,165,250,0.5);
-}
-
-.mana-pulse {
-  box-shadow: 0 0 25px rgba(96,165,250,0.8) !important;
 }
 
 /* =========================
-   LEVEL UP SCREEN
+   POPUPS
+========================= */
+
+.xp-popup {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: linear-gradient(135deg, #3b82f6, #60a5fa);
+  padding: 10px 15px;
+  border-radius: 12px;
+  z-index: 9999;
+}
+
+.center-popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(17, 25, 40, 0.97);
+  border: 1px solid rgba(96,165,250,0.5);
+  padding: 20px;
+  border-radius: 16px;
+  z-index: 99999;
+  text-align: center;
+}
+
+/* =========================
+   LEVEL UP
 ========================= */
 
 .level-up {
@@ -302,13 +245,15 @@ button:hover {
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 999999;
-  text-align: center;
+  z-index: 99999;
 }
 
-.level-up h1 {
-  font-size: 42px;
-  color: #93c5fd;
+/* =========================
+   UTIL
+========================= */
+
+.hidden {
+  display: none !important;
 }
 
 /* =========================
@@ -319,12 +264,4 @@ button:hover {
   .day-grid {
     grid-template-columns: repeat(2, 1fr);
   }
-}
-
-.hidden {
-  display: none !important;
-}
-
-.level-up {
-  pointer-events: none;
 }
