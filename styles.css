@@ -12,17 +12,14 @@ body {
   font-family: "Rajdhani", sans-serif;
   color: #e5e7eb;
   min-height: 100vh;
-  font-size: 16px;
   background: radial-gradient(circle at top, #1b2a4a, #0b1020 45%, #050814);
   overflow-x: hidden;
 
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 20px;
+  justify-content: center;
 }
 
-/* particles */
+/* particle layer */
 body::before {
   content: "";
   position: fixed;
@@ -39,12 +36,21 @@ body::before {
   to { transform: translateY(-250px); }
 }
 
-/* keep UI above particles */
-body > * {
-  position: relative;
-  z-index: 1;
+/* =========================
+   MAIN DASHBOARD WRAPPER (THIS FIXES EVERYTHING)
+========================= */
+
+.dashboard {
   width: 100%;
   max-width: 900px;
+  padding: 25px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+
+  position: relative;
+  z-index: 1;
 }
 
 /* =========================
@@ -53,18 +59,21 @@ body > * {
 
 h1 {
   font-family: "Cinzel", serif;
-  font-size: 32px;
+  font-size: 34px;
   color: #93c5fd;
   text-align: center;
+  margin: 0;
 }
 
 h2 {
   text-align: center;
   color: #cbd5e1;
+  margin: 10px 0;
 }
 
 p {
   color: #cbd5e1;
+  margin: 4px 0;
 }
 
 /* =========================
@@ -81,10 +90,14 @@ p {
   box-shadow: 0 10px 30px rgba(0,0,0,0.45);
 }
 
-/* profile spacing fix */
+/* profile */
 .profile-card {
   padding: 20px;
-  margin-top: 10px;
+  text-align: center;
+
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
 /* =========================
@@ -92,9 +105,11 @@ p {
 ========================= */
 
 .center-card {
+  width: 100%;
   max-width: 340px;
   margin-top: 80px;
   padding: 25px;
+  text-align: center;
 }
 
 /* =========================
@@ -111,7 +126,6 @@ input {
   background: rgba(0,0,0,0.35);
   color: white;
   margin-top: 10px;
-  outline: none;
 }
 
 /* =========================
@@ -127,11 +141,6 @@ button {
   color: white;
   cursor: pointer;
   font-weight: 600;
-  transition: 0.2s ease;
-}
-
-button:hover {
-  transform: translateY(-3px) scale(1.03);
 }
 
 /* =========================
@@ -143,14 +152,12 @@ button:hover {
   justify-content: center;
   gap: 12px;
   flex-wrap: wrap;
-  margin-top: 10px;
 }
 
 .class-card {
   min-width: 140px;
   padding: 16px;
   text-align: center;
-  cursor: pointer;
 }
 
 /* =========================
@@ -161,7 +168,6 @@ button:hover {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 10px;
-  margin-top: 12px;
   width: 100%;
 }
 
@@ -184,7 +190,7 @@ button:hover {
 .day-box.active {
   border: 2px solid #60a5fa;
   box-shadow: 0 0 25px rgba(96,165,250,0.9);
-  transform: scale(1.1);
+  transform: scale(1.08);
 }
 
 /* =========================
@@ -197,7 +203,6 @@ button:hover {
   background: rgba(0,0,0,0.4);
   border-radius: 10px;
   overflow: hidden;
-  margin-top: 10px;
 }
 
 .xp-bar {
