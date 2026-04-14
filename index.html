@@ -7,7 +7,7 @@
 
   <link rel="stylesheet" href="styles.css">
 
-  <!-- Fantasy Fonts -->
+  <!-- Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Rajdhani:wght@400;500;600&display=swap" rel="stylesheet">
 </head>
 
@@ -17,10 +17,9 @@
     <h1>Vermeil Quest</h1>
     <p class="subtitle">Enter the Academy</p>
 
-    <!-- FORM (clean + functional) -->
-    <form onsubmit="login(); return false;">
-      
-      <!-- STUDENT ID -->
+    <!-- FIXED FORM (NO INLINE JS) -->
+    <form id="loginForm">
+
       <input 
         id="studentId" 
         type="text" 
@@ -30,7 +29,6 @@
 
       <br><br>
 
-      <!-- PASSWORD (same as ID for now) -->
       <input 
         id="password" 
         type="password" 
@@ -40,13 +38,11 @@
 
       <br><br>
 
-      <!-- SUBMIT -->
       <button type="submit">Enter Quest</button>
 
     </form>
   </div>
 
-  <!-- IMPORTANT: must be module for Firebase -->
   <script type="module" src="login.js"></script>
 
 </body>
