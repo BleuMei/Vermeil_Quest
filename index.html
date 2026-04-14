@@ -1,62 +1,55 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vermeil Quest</title>
 
-const firebaseConfig = {
-  apiKey: "AIzaSyBMc36-Vg_Ger814ZWz_JHs7KG-csgGggA",
-  authDomain: "vermeil-quest.firebaseapp.com",
-  projectId: "vermeil-quest",
-  storageBucket: "vermeil-quest.firebasestorage.app",
-  messagingSenderId: "943194791633",
-  appId: "1:943194791633:web:a3ddd0f3914f518171aff0"
-};
+  <link rel="stylesheet" href="styles.css">
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Rajdhani:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
 
-async function login(event) {
-  if (event) event.preventDefault();
+<body>
 
-  const id = document.getElementById("studentId").value;
-  const password = document.getElementById("password").value;
+  <div class="center-card">
+    <h1>Vermeil Quest</h1>
+    <p class="subtitle">Enter the Academy</p>
 
-  if (!id || !password) {
-    alert("Enter ID and password");
-    return;
-  }
+    <form id="loginForm">
+      <input id="studentId" type="text" placeholder="Student ID" required>
+      <br><br>
 
-  try {
-    const ref = doc(db, "students", id);
-    const snap = await getDoc(ref);
+      <input id="password" type="password" placeholder="Password (same as ID)" required>
+      <br><br>
 
-    if (!snap.exists()) {
-      alert("Student not found in database");
-      return;
-    }
+      <button type="submit">Enter Quest</button>
+    </form>
+  </div>
 
-    const data = snap.data();
+  <script type="module" src="login.js"></script>
 
-    if (password !== id) {
-      alert("Wrong password");
-      return;
-    }
+  <script>
+    // this runs AFTER module loads safely
+    window.addEventListener("DOMContentLoaded", () => {
+      const form = document.getElementById("loginForm");
 
-    localStorage.setItem("user", JSON.stringify({
-      id,
-      name: data.name,
-      section: data.section,
-      xp: data.xp || 0,
-      level: data.level || 1,
-      streak: data.streak || 0,
-      dailyClaimed: data.dailyClaimed || {}
-    }));
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
 
-    window.location.href = "dashboard.html";
+        const id = document.getElementById("studentId").value;
+        const password = document.getElementById("password").value;
 
-  } catch (err) {
-    console.error(err);
-    alert("Login failed. Check console.");
-  }
-}
+        const loginFn = window.login;
+        if (!loginFn) {
+          alert("Login function not loaded yet");
+          return;
+        }
 
-/* 🔥 THIS is the key fix */
-window.login = login;
+        await loginFn(id, password);
+      });
+    });
+  </script>
+
+</body>
+</html>
