@@ -1,49 +1,62 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Vermeil Quest</title>
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-  <link rel="stylesheet" href="styles.css">
+const firebaseConfig = {
+  apiKey: "AIzaSyBMc36-Vg_Ger814ZWz_JHs7KG-csgGggA",
+  authDomain: "vermeil-quest.firebaseapp.com",
+  projectId: "vermeil-quest",
+  storageBucket: "vermeil-quest.firebasestorage.app",
+  messagingSenderId: "943194791633",
+  appId: "1:943194791633:web:a3ddd0f3914f518171aff0"
+};
 
-  <!-- Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Rajdhani:wght@400;500;600&display=swap" rel="stylesheet">
-</head>
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
-<body>
+async function login(event) {
+  if (event) event.preventDefault();
 
-  <div class="center-card">
-    <h1>Vermeil Quest</h1>
-    <p class="subtitle">Enter the Academy</p>
+  const id = document.getElementById("studentId").value;
+  const password = document.getElementById("password").value;
 
-    <!-- FIXED FORM (NO INLINE JS) -->
-    <form id="loginForm">
+  if (!id || !password) {
+    alert("Enter ID and password");
+    return;
+  }
 
-      <input 
-        id="studentId" 
-        type="text" 
-        placeholder="Student ID" 
-        required
-      >
+  try {
+    const ref = doc(db, "students", id);
+    const snap = await getDoc(ref);
 
-      <br><br>
+    if (!snap.exists()) {
+      alert("Student not found in database");
+      return;
+    }
 
-      <input 
-        id="password" 
-        type="password" 
-        placeholder="Password (same as ID)" 
-        required
-      >
+    const data = snap.data();
 
-      <br><br>
+    if (password !== id) {
+      alert("Wrong password");
+      return;
+    }
 
-      <button type="submit">Enter Quest</button>
+    localStorage.setItem("user", JSON.stringify({
+      id,
+      name: data.name,
+      section: data.section,
+      xp: data.xp || 0,
+      level: data.level || 1,
+      streak: data.streak || 0,
+      dailyClaimed: data.dailyClaimed || {}
+    }));
 
-    </form>
-  </div>
+    window.location.href = "dashboard.html";
 
-  <script type="module" src="login.js"></script>
+  } catch (err) {
+    console.error(err);
+    alert("Login failed. Check console.");
+  }
+}
 
-</body>
-</html>
+/* 🔥 THIS is the key fix */
+window.login = login;
