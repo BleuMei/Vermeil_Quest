@@ -4,22 +4,37 @@
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Rajdhani:wght@400;500;600&display=swap');
 
 /* =========================
-   BASE
+   RESET
+========================= */
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+}
+
+/* =========================
+   BASE LAYOUT
 ========================= */
 
 body {
-  margin: 0;
   font-family: "Rajdhani", sans-serif;
   color: #e5e7eb;
   min-height: 100vh;
-  background: radial-gradient(circle at top, #1b2a4a, #0b1020 45%, #050814);
-  overflow-x: hidden;
 
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+
+  background: radial-gradient(circle at top, #1b2a4a, #0b1020 45%, #050814);
+  overflow-x: hidden;
+  padding: 24px;
+  gap: 18px;
 }
 
-/* particle layer */
+/* particles (background layer) */
 body::before {
   content: "";
   position: fixed;
@@ -36,79 +51,61 @@ body::before {
   to { transform: translateY(-250px); }
 }
 
-/* =========================
-   MAIN DASHBOARD WRAPPER (THIS FIXES EVERYTHING)
-========================= */
-
-.dashboard {
-  width: 100%;
-  max-width: 900px;
-  padding: 25px;
-
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-
+/* keep UI above particles */
+body > * {
   position: relative;
   z-index: 1;
+  width: 100%;
+  max-width: 900px;
 }
 
 /* =========================
    TYPOGRAPHY
 ========================= */
 
+h1, h2 {
+  text-align: center;
+  margin: 6px 0;
+}
+
 h1 {
   font-family: "Cinzel", serif;
   font-size: 34px;
   color: #93c5fd;
-  text-align: center;
-  margin: 0;
 }
 
 h2 {
-  text-align: center;
+  font-size: 20px;
   color: #cbd5e1;
-  margin: 10px 0;
-}
-
-p {
-  color: #cbd5e1;
-  margin: 4px 0;
 }
 
 /* =========================
-   CARDS
+   CARD SYSTEM
 ========================= */
 
 .profile-card,
 .center-card,
-.class-card {
+.class-card,
+.day-box {
   background: rgba(255, 255, 255, 0.06);
   border: 1px solid rgba(147, 197, 253, 0.25);
   backdrop-filter: blur(14px);
-  border-radius: 18px;
+  border-radius: 16px;
   box-shadow: 0 10px 30px rgba(0,0,0,0.45);
 }
 
 /* profile */
 .profile-card {
-  padding: 20px;
+  padding: 18px;
   text-align: center;
-
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
 }
 
-/* =========================
-   LOGIN
-========================= */
-
+/* login card */
 .center-card {
   width: 100%;
-  max-width: 340px;
-  margin-top: 80px;
-  padding: 25px;
+  max-width: 360px;
+  margin-top: 60px;
+  padding: 22px;
   text-align: center;
 }
 
@@ -117,15 +114,20 @@ p {
 ========================= */
 
 input {
-  font-family: "Rajdhani", sans-serif;
-  font-size: 16px;
+  width: 100%;
+  margin-top: 10px;
+
   padding: 12px;
   border-radius: 10px;
+
+  font-family: "Rajdhani", sans-serif;
+  font-size: 16px;
+
   border: 1px solid rgba(147,197,253,0.25);
-  width: 100%;
   background: rgba(0,0,0,0.35);
   color: white;
-  margin-top: 10px;
+
+  outline: none;
 }
 
 /* =========================
@@ -133,14 +135,25 @@ input {
 ========================= */
 
 button {
+  margin-top: 12px;
+  width: 100%;
+
   font-family: "Cinzel", serif;
+  font-weight: 600;
+
   background: linear-gradient(135deg, #3b82f6, #60a5fa);
   border: none;
   padding: 12px;
+
   border-radius: 12px;
   color: white;
   cursor: pointer;
-  font-weight: 600;
+
+  transition: 0.2s ease;
+}
+
+button:hover {
+  transform: translateY(-2px);
 }
 
 /* =========================
@@ -150,14 +163,15 @@ button {
 .class-grid {
   display: flex;
   justify-content: center;
-  gap: 12px;
   flex-wrap: wrap;
+  gap: 12px;
 }
 
 .class-card {
-  min-width: 140px;
   padding: 16px;
+  min-width: 140px;
   text-align: center;
+  cursor: pointer;
 }
 
 /* =========================
@@ -171,14 +185,17 @@ button {
   width: 100%;
 }
 
+/* IMPORTANT FIX: prevents ugly stretching */
 .day-box {
-  font-family: "Cinzel", serif;
-  padding: 14px;
-  border-radius: 14px;
-  background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(147,197,253,0.2);
+  aspect-ratio: 1 / 1;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
   cursor: pointer;
   text-align: center;
+
   transition: 0.2s ease;
 }
 
@@ -203,13 +220,14 @@ button {
   background: rgba(0,0,0,0.4);
   border-radius: 10px;
   overflow: hidden;
+  margin-top: 10px;
 }
 
 .xp-bar {
   height: 100%;
   width: 0%;
   background: linear-gradient(90deg, #3b82f6, #60a5fa, #93c5fd);
-  transition: width 0.6s ease;
+  transition: width 0.5s ease;
 }
 
 /* =========================
