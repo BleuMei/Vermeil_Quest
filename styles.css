@@ -353,3 +353,17 @@ button:hover {
     grid-template-columns: repeat(2, 1fr);
   }
 }
+
+.subtitle {
+  text-align: center;
+  font-family: "Rajdhani", sans-serif;
+  font-size: 14px;
+  color: rgba(203, 213, 225, 0.85);
+  letter-spacing: 2px;
+  margin-top: -6px;
+  text-transform: uppercase;
+}
+
+.subtitle {
+  text-shadow: 0 0 10px rgba(96,165,250,0.25);
+}
